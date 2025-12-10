@@ -1,6 +1,6 @@
 // https://umijs.org/config/
 
-import { join } from 'node:path';
+import { join } from 'path';
 import { defineConfig } from '@umijs/max';
 import defaultSettings from './defaultSettings';
 
@@ -74,7 +74,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Ant Design Pro',
+  title: 'Plantheon',
   layout: {
     locale: false, // Disable i18n
     ...defaultSettings,

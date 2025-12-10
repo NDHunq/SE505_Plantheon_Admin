@@ -68,9 +68,9 @@ export default [
     component: "./function4",
   },
   {
-    name: "Function 5",
-    icon: "tool",
-    path: "/function5",
+    name: "News Management",
+    icon: "read",
+    path: "/news",
     component: "./function5",
   },
   {

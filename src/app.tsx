@@ -1,22 +1,15 @@
-import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { SettingDrawer } from '@ant-design/pro-components';
-import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
-import { history, Link } from '@umijs/max';
-import React from 'react';
-import {
-  AvatarDropdown,
-  AvatarName,
-  Footer,
-  Question,
-  // SelectLang removed - using English only
-} from '@/components';
-import defaultSettings from '../config/defaultSettings';
-import { errorConfig } from './requestErrorConfig';
-import '@ant-design/v5-patch-for-react-19';
+import { AvatarDropdown, AvatarName, Footer, Question } from "@/components";
+import { LinkOutlined } from "@ant-design/icons";
+import type { Settings as LayoutSettings } from "@ant-design/pro-components";
+import { SettingDrawer } from "@ant-design/pro-components";
+import "@ant-design/v5-patch-for-react-19";
+import type { RequestConfig, RunTimeLayoutConfig } from "@umijs/max";
+import { history, Link } from "@umijs/max";
+import defaultSettings from "../config/defaultSettings";
+import { errorConfig } from "./requestErrorConfig";
 
-const isDev = process.env.NODE_ENV === 'development' || process.env.CI;
-const loginPath = '/user/login';
+const isDev = process.env.NODE_ENV === "development" || process.env.CI;
+const loginPath = "/user/login";
 
 // Define CurrentUser type inline since we removed the API namespace
 type CurrentUser = {
@@ -41,30 +34,40 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      // TODO: Replace with real API call when ready
-      // Mock user data for now
-      return {
-        name: 'Admin User',
-        avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-        userid: '00000001',
-        email: 'admin@example.com',
-        signature: 'Mock user data',
-        title: 'Administrator',
-        group: 'Admin Group',
-      };
+      // Read user from localStorage
+      const userStr = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+
+      if (userStr && token) {
+        const user = JSON.parse(userStr);
+        return {
+          name: user.full_name || user.username,
+          avatar:
+            user.avatar ||
+            "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+          userid: user.id,
+          email: user.email,
+          role: user.role,
+        };
+      }
+      return undefined;
     } catch (_error) {
-      history.push(loginPath);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      return undefined;
     }
-    return undefined;
   };
   // 如果不是登录页面，执行
   const { location } = history;
   if (
-    ![loginPath, '/user/register', '/user/register-result'].includes(
-      location.pathname,
+    ![loginPath, "/user/register", "/user/register-result"].includes(
+      location.pathname
     )
   ) {
     const currentUser = await fetchUserInfo();
+    if (!currentUser) {
+      history.push(loginPath);
+    }
     return {
       fetchUserInfo,
       currentUser,
@@ -95,7 +98,7 @@ export const layout: RunTimeLayoutConfig = ({
       },
     },
     waterMarkProps: {
-      content: '', // Watermark disabled
+      content: "", // Watermark disabled
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
@@ -107,31 +110,31 @@ export const layout: RunTimeLayoutConfig = ({
     },
     bgLayoutImgList: [
       {
-        src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
+        src: "https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr",
         left: 85,
         bottom: 100,
-        height: '303px',
+        height: "303px",
       },
       {
-        src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/C2TWRpJpiC0AAAAAAAAAAAAAFl94AQBr',
+        src: "https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/C2TWRpJpiC0AAAAAAAAAAAAAFl94AQBr",
         bottom: -68,
         right: -45,
-        height: '303px',
+        height: "303px",
       },
       {
-        src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/F6vSTbj8KpYAAAAAAAAAAAAAFl94AQBr',
+        src: "https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/F6vSTbj8KpYAAAAAAAAAAAAAFl94AQBr",
         bottom: 0,
         left: 0,
-        width: '331px',
+        width: "331px",
       },
     ],
     links: isDev
       ? [
-        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-      ]
+          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+            <LinkOutlined />
+            <span>OpenAPI 文档</span>
+          </Link>,
+        ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
@@ -168,6 +171,6 @@ export const layout: RunTimeLayoutConfig = ({
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const request: RequestConfig = {
-  baseURL: 'https://proapi.azurewebsites.net',
+  baseURL: "http://localhost:8080/api/v1",
   ...errorConfig,
 };

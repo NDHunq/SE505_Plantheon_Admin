@@ -56,6 +56,12 @@ export default [
     component: "./plant",
   },
   {
+    name: "Activity Keywords",
+    icon: "tags",
+    path: "/activity-keyword",
+    component: "./activity-keyword",
+  },
+  {
     name: "Function 3",
     icon: "tool",
     path: "/function3",

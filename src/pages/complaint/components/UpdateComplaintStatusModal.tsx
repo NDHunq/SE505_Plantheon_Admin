@@ -42,7 +42,7 @@ const UpdateComplaintStatusModal: React.FC<UpdateComplaintStatusModalProps> = ({
             admin_notes: values.admin_notes,
           });
 
-          message.success("Complaint status updated successfully!");
+          message.success("Cập nhật trạng thái khiếu nại thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {

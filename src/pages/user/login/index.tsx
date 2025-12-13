@@ -60,7 +60,7 @@ const Login: React.FC = () => {
       // Check if user is admin
       if (user.role !== "admin") {
         setErrorMessage(
-          "Access denied. Only administrators can access this system."
+          "Truy cập bị từ chối. Chỉ quản trị viên mới có thể truy cập hệ thống này."
         );
         setLoading(false);
         return;
@@ -70,7 +70,7 @@ const Login: React.FC = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      message.success("Login successful!");
+      message.success("Đăng nhập thành công!");
 
       // Update initialState
       flushSync(() => {
@@ -96,7 +96,7 @@ const Login: React.FC = () => {
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Login failed. Please try again.";
+        "Đăng nhập thất bại. Vui lòng thử lại.";
       setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
@@ -119,15 +119,15 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: "75vw",
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="Plantheon Admin"
-          subTitle="Plant Disease Management System"
+          logo={<img alt="logo" src="/logo.png" />}
+          title="Quản trị Plantheon"
+          subTitle="Hệ thống quản lý bệnh cây trồng"
           initialValues={{
             autoLogin: true,
           }}
           submitter={{
             searchConfig: {
-              submitText: "Login",
+              submitText: "Đăng nhập",
             },
             submitButtonProps: {
               loading: loading,
@@ -153,11 +153,11 @@ const Login: React.FC = () => {
             rules={[
               {
                 required: true,
-                message: "Please enter your email!",
+                message: "Vui lòng nhập email!",
               },
               {
                 type: "email",
-                message: "Please enter a valid email!",
+                message: "Vui lòng nhập email hợp lệ!",
               },
             ]}
           />
@@ -167,11 +167,11 @@ const Login: React.FC = () => {
               size: "large",
               prefix: <LockOutlined />,
             }}
-            placeholder="Password"
+            placeholder="Mật khẩu"
             rules={[
               {
                 required: true,
-                message: "Please enter your password!",
+                message: "Vui lòng nhập mật khẩu!",
               },
             ]}
           />

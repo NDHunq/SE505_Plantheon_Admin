@@ -48,7 +48,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
 
       setAddingPlant(true);
       await createPlant(values);
-      message.success("Plant added successfully!");
+      message.success("Thêm cây trồng thành công!");
       setAddPlantOpen(false);
       plantForm.resetFields();
       // Reload the plant options
@@ -69,7 +69,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
   return (
     <>
       <ModalForm<UpdateDiseaseParams & { image_urls: string[] }>
-        title="Edit Disease"
+        title="Chỉnh sửa bệnh cây"
         trigger={trigger}
         width={600}
         modalProps={{
@@ -100,7 +100,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
               image_link: imageLinks,
             });
 
-            message.success("Disease updated successfully!");
+            message.success("Cập nhật bệnh cây thành công!");
             onSuccess?.();
             return true;
           } catch (error: any) {
@@ -258,7 +258,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
 
       {/* Add Plant Modal - Full Form */}
       <Modal
-        title="Add New Plant"
+        title="Thêm cây trồng mới"
         open={addPlantOpen}
         onCancel={() => {
           setAddPlantOpen(false);

@@ -87,7 +87,7 @@ const UpdateActivityKeywordModal: React.FC<UpdateActivityKeywordModalProps> = ({
             );
           }
 
-          message.success("Activity keyword updated successfully!");
+          message.success("Cập nhật từ khóa hoạt động thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {

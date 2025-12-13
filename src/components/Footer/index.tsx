@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       style={{
         background: 'none',
       }}
-      copyright="Powered by Plantheon"
+      copyright="Được phát triển bởi Plantheon"
       links={[
         {
           key: 'Plantheon',

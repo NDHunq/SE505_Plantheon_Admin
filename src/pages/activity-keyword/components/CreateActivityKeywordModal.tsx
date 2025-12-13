@@ -76,7 +76,7 @@ const CreateActivityKeywordModal: React.FC<CreateActivityKeywordModalProps> = ({
             );
           }
 
-          message.success("Activity keyword created successfully!");
+          message.success("Cập nhật từ khóa hoạt động thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {

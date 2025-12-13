@@ -31,7 +31,7 @@ const ComplaintManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteComplaint(id);
-      messageApi.success("Complaint deleted successfully");
+      messageApi.success("Xóa khiếu nại thành công");
       actionRef.current?.reload();
     } catch (error: any) {
       const errorMsg =

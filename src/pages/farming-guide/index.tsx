@@ -183,7 +183,7 @@ const FarmingGuide: React.FC = () => {
     try {
       const payload = cleanGuidePayload({ ...values, plant_id: selectedPlant.id });
       await createGuideStage(payload);
-      message.success("Guide stage created");
+      message.success("Tạo giai đoạn hướng dẫn thành công");
       loadGuideStages(selectedPlant.id);
       return true;
     } catch (error: any) {
@@ -196,7 +196,7 @@ const FarmingGuide: React.FC = () => {
     try {
       const payload = cleanGuidePayload(values);
       await updateGuideStage(id, payload);
-      message.success("Guide stage updated");
+      message.success("Cập nhật giai đoạn hướng dẫn thành công");
       if (selectedPlant) loadGuideStages(selectedPlant.id);
       return true;
     } catch (error: any) {
@@ -208,7 +208,7 @@ const FarmingGuide: React.FC = () => {
   const handleDeleteStage = async (id: string) => {
     try {
       await deleteGuideStage(id);
-      message.success("Guide stage deleted");
+      message.success("Xóa giai đoạn hướng dẫn thành công");
       if (selectedPlant) loadGuideStages(selectedPlant.id);
     } catch (error: any) {
       message.error(error?.response?.data?.message || error?.message || "Failed to delete stage");
@@ -219,7 +219,7 @@ const FarmingGuide: React.FC = () => {
     try {
       const payload = cleanGuidePayload({ ...values, guide_stages_id: guideStageId });
       await createSubGuideStage(payload);
-      message.success("Sub guide stage created");
+      message.success("Tạo giai đoạn phụ thành công");
       loadStageDetail(guideStageId);
       return true;
     } catch (error: any) {
@@ -232,7 +232,7 @@ const FarmingGuide: React.FC = () => {
     try {
       const payload = cleanGuidePayload(values);
       await updateSubGuideStage(id, payload);
-      message.success("Sub guide stage updated");
+      message.success("Cập nhật giai đoạn phụ thành công");
       loadStageDetail(guideStageId);
       return true;
     } catch (error: any) {
@@ -244,7 +244,7 @@ const FarmingGuide: React.FC = () => {
   const handleDeleteSubStage = async (id: string, guideStageId: string) => {
     try {
       await deleteSubGuideStage(id);
-      message.success("Sub guide stage deleted");
+      message.success("Xóa giai đoạn phụ thành công");
       loadStageDetail(guideStageId);
     } catch (error: any) {
       message.error(error?.response?.data?.message || error?.message || "Failed to delete sub stage");
@@ -277,10 +277,10 @@ const FarmingGuide: React.FC = () => {
       };
       if (blogId) {
         await updateNews(blogId, payload);
-        message.success("Blog updated successfully");
+        message.success("Cập nhật bài viết thành công");
       } else {
         await createNews(payload);
-        message.success("Blog created successfully");
+        message.success("Tạo bài viết thành công");
       }
       setBlogEditing(null);
       setBlogContent("");
@@ -316,7 +316,7 @@ const FarmingGuide: React.FC = () => {
     }
     try {
       await deleteNews(blogId);
-      message.success("Blog deleted successfully");
+      message.success("Xóa bài viết thành công");
       const stageId = stageIdBySub(subGuideStageId);
       if (stageId) loadStageDetail(stageId);
     } catch (error: any) {

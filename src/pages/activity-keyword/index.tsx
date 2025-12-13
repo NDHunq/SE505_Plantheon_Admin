@@ -35,7 +35,7 @@ const ActivityKeywordManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteActivityKeyword(id);
-      messageApi.success("Activity keyword deleted successfully");
+      messageApi.success("Xóa từ khóa hoạt động thành công");
       actionRef.current?.reload();
     } catch (error: any) {
       const errorMsg =

@@ -68,7 +68,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onSuccess }) => {
 
   return (
     <ModalForm
-      title="Import Diseases from CSV/Excel"
+      title="Nh\u1eadp b\u1ec7nh c\u00e2y t\u1eeb CSV/Excel"
       trigger={<Button icon={<UploadOutlined />}>Import</Button>}
       width={600}
       modalProps={{

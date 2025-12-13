@@ -74,15 +74,15 @@ export default [
     component: "./function3",
   },
   {
-    name: "Function 4",
-    icon: "tool",
-    path: "/function4",
+    name: "User Management",
+    icon: "user",
+    path: "/users",
     component: "./function4",
   },
   {
-    name: "Function 5",
-    icon: "tool",
-    path: "/function5",
+    name: "News Management",
+    icon: "read",
+    path: "/news",
     component: "./function5",
   },
   {

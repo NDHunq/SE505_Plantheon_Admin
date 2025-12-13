@@ -61,7 +61,7 @@ const CreateDiseaseModal: React.FC<CreateDiseaseModalProps> = ({
         title="Tạo bệnh cây mới"
         trigger={
           <Button type="primary" icon={<PlusOutlined />}>
-            New Disease
+            Bệnh cây mới
           </Button>
         }
         width={600}

@@ -30,7 +30,10 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
       const response = await importKeywordsCsv(file);
       setResult(response);
 
-      if (response.errors.length === 0) {
+      // Check if errors array exists and has length
+      const hasErrors = response.errors && response.errors.length > 0;
+
+      if (!hasErrors) {
         message.success(
           `Successfully imported ${response.success} out of ${response.total} rows!`
         );
@@ -146,10 +149,10 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
                 <span>
                   Total: {result.total} | Success:{" "}
                   <Text type="success">{result.success}</Text> | Errors:{" "}
-                  <Text type="danger">{result.errors.length}</Text>
+                  <Text type="danger">{result.errors?.length || 0}</Text>
                 </span>
               }
-              type={result.errors.length > 0 ? "warning" : "success"}
+              type={(result.errors?.length || 0) > 0 ? "warning" : "success"}
               showIcon
             />
 

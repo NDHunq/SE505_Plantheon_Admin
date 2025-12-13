@@ -69,6 +69,76 @@ export async function getActivityKeywords(): Promise<{
 }
 
 /**
+ * Get paginated activity keywords
+ * GET /activity-keywords/paginated?page=1&limit=20
+ */
+export async function getActivityKeywordsPaginated(params: {
+  page?: number;
+  limit?: number;
+}): Promise<{
+  data: ActivityKeyword[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}> {
+  return request<{
+    data: ActivityKeyword[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      total_pages: number;
+    };
+  }>("/activity-keywords/paginated", {
+    method: "GET",
+    params,
+  });
+}
+
+/**
+ * Query activity keywords with filters and pagination
+ * GET /activity-keywords/query?name=X&type=Y&page=1&limit=20
+ */
+export async function queryActivityKeywords(params: {
+  name?: string;
+  type?: "TECHNIQUE" | "CLIMATE" | "DISEASE" | "OTHER" | "EXPENSE" | "INCOME";
+  page?: number;
+  limit?: number;
+}): Promise<{
+  data: ActivityKeyword[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+  filters: {
+    name?: string;
+    type?: string;
+  };
+}> {
+  return request<{
+    data: ActivityKeyword[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      total_pages: number;
+    };
+    filters: {
+      name?: string;
+      type?: string;
+    };
+  }>("/activity-keywords/query", {
+    method: "GET",
+    params,
+  });
+}
+
+/**
  * Get activity keyword by ID
  * GET /activity-keywords/:id
  */

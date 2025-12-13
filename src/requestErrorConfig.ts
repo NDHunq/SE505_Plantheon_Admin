@@ -72,7 +72,30 @@ export const errorConfig: RequestConfig = {
       } else if (error.response) {
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
-        message.error(`Response status:${error.response.status}`);
+        console.error("❌ [Error Handler] Response error:", {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          url: error.response.config?.url,
+          headers: error.response.config?.headers,
+          data: error.response.data,
+        });
+
+        if (error.response.status === 401) {
+          console.error("🚫 [401 Unauthorized] Authentication failed!");
+          console.error("🚫 [401] Request URL:", error.response.config?.url);
+          console.error(
+            "🚫 [401] Request headers:",
+            error.response.config?.headers
+          );
+          console.error("🚫 [401] Response data:", error.response.data);
+          message.error(
+            `Authentication failed (401): ${
+              error.response.data?.error || "Unauthorized"
+            }`
+          );
+        } else {
+          message.error(`Response status:${error.response.status}`);
+        }
       } else if (error.request) {
         // 请求已经成功发起，但没有收到响应
         // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
@@ -90,11 +113,22 @@ export const errorConfig: RequestConfig = {
     (config: RequestOptions) => {
       // Add Bearer token from localStorage
       const token = localStorage.getItem("token");
+      console.log("🔐 [Request Interceptor] URL:", config.url);
+      console.log("🔐 [Request Interceptor] Token exists:", !!token);
+      console.log(
+        "🔐 [Request Interceptor] Token:",
+        token?.substring(0, 50) + "..."
+      );
       if (token) {
         config.headers = {
           ...config.headers,
           Authorization: `Bearer ${token}`,
         };
+        console.log("🔐 [Request Interceptor] Authorization header set");
+      } else {
+        console.warn(
+          "⚠️ [Request Interceptor] No token found in localStorage!"
+        );
       }
       return config;
     },

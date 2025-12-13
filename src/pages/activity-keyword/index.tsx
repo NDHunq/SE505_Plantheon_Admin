@@ -1,9 +1,8 @@
 import {
   ActivityKeywordWithDiseases,
   deleteActivityKeyword,
-  getActivityKeywords,
   getDiseasesForKeyword,
-  searchActivityKeywords,
+  queryActivityKeywords,
 } from "@/services/activityKeyword";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
@@ -184,19 +183,15 @@ const ActivityKeywordManagement: React.FC = () => {
         ]}
         request={async (params) => {
           try {
-            let response;
-            if (params.name) {
-              response = await searchActivityKeywords(params.name);
-            } else {
-              response = await getActivityKeywords();
-            }
+            // Use unified query endpoint with all filters
+            const queryResponse = await queryActivityKeywords({
+              name: params.name,
+              type: params.type,
+              page: params.current || 1,
+              limit: params.pageSize || 20,
+            });
 
-            let data = response.data || [];
-
-            // Client-side filtering by type if needed
-            if (params.type) {
-              data = data.filter((item) => item.type === params.type);
-            }
+            const data = queryResponse.data || [];
 
             // Fetch diseases for each keyword
             const keywordsWithDiseases = await Promise.all(
@@ -210,7 +205,6 @@ const ActivityKeywordManagement: React.FC = () => {
                     diseases: diseaseResponse.data || [],
                   };
                 } catch (error) {
-                  // If error fetching diseases, return keyword without diseases
                   return { ...keyword, diseases: [] };
                 }
               })
@@ -219,7 +213,7 @@ const ActivityKeywordManagement: React.FC = () => {
             return {
               data: keywordsWithDiseases,
               success: true,
-              total: keywordsWithDiseases.length,
+              total: queryResponse.pagination.total,
             };
           } catch (error) {
             messageApi.error("Failed to fetch activity keywords");

@@ -62,6 +62,12 @@ export default [
     component: "./activity-keyword",
   },
   {
+    name: "Complaints Management",
+    icon: "flag",
+    path: "/complaint",
+    component: "./complaint",
+  },
+  {
     name: "Function 3",
     icon: "tool",
     path: "/function3",

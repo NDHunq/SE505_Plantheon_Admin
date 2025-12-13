@@ -12,13 +12,13 @@
 }
 
 .ant-modal .w-md-editor-text {
-  z-index: 1 !important;
+  z-index       : 1 !important;
   pointer-events: auto !important;
 }
 
 .ant-modal .w-md-editor-text textarea {
   pointer-events: auto !important;
-  z-index: 1 !important;
+  z-index       : 1 !important;
 }
 
 /* Ensure editor is interactive */
@@ -28,12 +28,12 @@
 
 .w-md-editor-text textarea {
   position: relative !important;
-  z-index: 1 !important;
+  z-index : 1 !important;
 }
 
 /* Fix focus issues */
 .ant-modal-content .w-md-editor-text textarea:focus {
-  outline: none !important;
+  outline     : none !important;
   border-color: #1890ff !important;
 }
 

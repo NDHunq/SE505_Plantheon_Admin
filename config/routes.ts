@@ -85,6 +85,12 @@ export default [
     path: "/news",
     component: "./function5",
   },
+    {
+    name: "Farming Guide",
+    icon: "setting",
+    path: "/farming-guide",
+    component: "./farming-guide",
+  },
   {
     path: "/dashboard",
     name: "dashboard",

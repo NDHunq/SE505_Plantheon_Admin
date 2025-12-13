@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       style={{
         background: 'none',
       }}
-      copyright="Powered by Ant Desgin"
+      copyright="Powered by Plantheon"
       links={[
         {
           key: 'Plantheon',
@@ -23,8 +23,8 @@ const Footer: React.FC = () => {
           blankTarget: true,
         },
         {
-          key: 'Ant Design',
-          title: 'Ant Design',
+          key: 'Plantheon',
+          title: 'Plantheon',
           href: 'https://ant.design',
           blankTarget: true,
         },

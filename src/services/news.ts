@@ -9,6 +9,7 @@ export interface News {
   content?: string;
   blog_tag_id?: string | null;
   blog_tag_name?: string | null;
+  sub_guide_stages_id?: string | null;
   cover_image_url?: string | null;
   status: NewsStatus;
   published_at?: string | null;
@@ -37,6 +38,7 @@ export interface CreateNewsRequest {
   content: string;
   cover_image_url?: string | null;
   blog_tag_id?: string | null;
+  sub_guide_stages_id?: string | null;
   status?: NewsStatus;
 }
 
@@ -99,5 +101,6 @@ export async function deleteNews(
   logApi("DELETE /news/:id response", res);
   return res;
 }
+
 
 

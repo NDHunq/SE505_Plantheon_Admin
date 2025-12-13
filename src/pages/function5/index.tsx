@@ -20,12 +20,18 @@ import {
 import {
   Avatar,
   Button,
+  Col,
   Card,
   Drawer,
+  Empty,
+  Flex,
   List,
   message,
   Popconfirm,
+  Row,
   Space,
+  Collapse,
+  Spin,
   Tag,
   Tabs,
 } from "antd";
@@ -50,6 +56,21 @@ import {
   getNewsTags,
   updateNewsTag,
 } from "@/services/newsTag";
+import {
+  createGuideStage,
+  createSubGuideStage,
+  deleteGuideStage,
+  deleteSubGuideStage,
+  getGuideStageDetail,
+  getGuideStagesByPlant,
+  getSubGuideStagesByStage,
+  GuideStage,
+  GuideStageDetail,
+  SubGuideStage,
+  updateGuideStage,
+  updateSubGuideStage,
+} from "@/services/guide";
+import { getPlants, Plant } from "@/services/plant";
 
 const statusColors: Record<NewsStatus, string> = {
   draft: "default",
@@ -75,6 +96,24 @@ const Function5: React.FC = () => {
   const [tagSaving, setTagSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("news");
 
+  // Farming guide states
+  const [plants, setPlants] = useState<Plant[]>([]);
+  const [plantsLoading, setPlantsLoading] = useState(false);
+  const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
+  const [guideStages, setGuideStages] = useState<GuideStage[]>([]);
+  const [stagesLoading, setStagesLoading] = useState(false);
+  const [stageDetails, setStageDetails] = useState<
+    Record<string, GuideStageDetail>
+  >({});
+  const [stageDetailLoading, setStageDetailLoading] = useState<string | null>(
+    null
+  );
+  const [subStageCreatingFor, setSubStageCreatingFor] = useState<string | null>(
+    null
+  );
+  const [blogEditing, setBlogEditing] = useState<any | null>(null);
+  const [blogContent, setBlogContent] = useState<string>("");
+
   const statusOptions = useMemo(
     () => [
       { label: "Draft", value: "draft" },
@@ -88,10 +127,32 @@ const Function5: React.FC = () => {
     [tags]
   );
 
+  // Helper: clean payload & cast numeric offsets
+  const cleanGuidePayload = (obj: Record<string, any>) => {
+    const cleaned: Record<string, any> = {};
+    Object.entries(obj).forEach(([k, v]) => {
+      if (v === "" || v === undefined || v === null) return;
+      if (["start_day_offset", "end_day_offset", "start_day", "end_day"].includes(k)) {
+        const num = Number(v);
+        if (!Number.isNaN(num)) cleaned[k] = num;
+      } else {
+        cleaned[k] = v;
+      }
+    });
+    return cleaned;
+  };
+
   // Load tags on component mount
   useEffect(() => {
     loadTags();
   }, []);
+
+  // Load plants when guide tab active
+  useEffect(() => {
+    if (activeTab === "guide" && plants.length === 0) {
+      loadPlants();
+    }
+  }, [activeTab]);
 
   const loadTags = async () => {
     try {
@@ -99,6 +160,18 @@ const Function5: React.FC = () => {
       setTags(res.data.blog_tags || []);
     } catch (error: any) {
       console.error("Failed to load tags:", error);
+    }
+  };
+
+  const loadPlants = async () => {
+    try {
+      setPlantsLoading(true);
+      const res = await getPlants();
+      setPlants(res.data.plants || []);
+    } catch (error: any) {
+      console.error("Failed to load plants", error);
+    } finally {
+      setPlantsLoading(false);
     }
   };
 
@@ -126,6 +199,201 @@ const Function5: React.FC = () => {
       const errMsg =
         error?.response?.data?.message || error?.message || "Failed to delete news";
       message.error(errMsg);
+    }
+  };
+
+  // Guide/Stage helpers
+  const loadGuideStages = async (plantId: string) => {
+    try {
+      setStagesLoading(true);
+      const res = await getGuideStagesByPlant(plantId);
+      const payload = (res as any)?.data || res;
+      const stages =
+        payload?.guide_stages ||
+        payload?.data?.guide_stages ||
+        [];
+      setGuideStages(Array.isArray(stages) ? stages : []);
+      setStageDetails({});
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to load guide stages"
+      );
+    } finally {
+      setStagesLoading(false);
+    }
+  };
+
+  const loadStageDetail = async (stageId: string) => {
+    try {
+      setStageDetailLoading(stageId);
+      const res = await getGuideStageDetail(stageId);
+      const payload = (res as any)?.data || res;
+      setStageDetails((prev) => ({ ...prev, [stageId]: payload }));
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to load stage detail"
+      );
+    } finally {
+      setStageDetailLoading(null);
+    }
+  };
+
+  const handleCreateStage = async (values: any) => {
+    if (!selectedPlant) return false;
+    try {
+      const payload = cleanGuidePayload({ ...values, plant_id: selectedPlant.id });
+      await createGuideStage(payload);
+      message.success("Guide stage created");
+      loadGuideStages(selectedPlant.id);
+      return true;
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to create stage"
+      );
+      return false;
+    }
+  };
+
+  const handleUpdateStage = async (id: string, values: any) => {
+    try {
+      const payload = cleanGuidePayload(values);
+      await updateGuideStage(id, payload);
+      message.success("Guide stage updated");
+      if (selectedPlant) loadGuideStages(selectedPlant.id);
+      return true;
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to update stage"
+      );
+      return false;
+    }
+  };
+
+  const handleDeleteStage = async (id: string) => {
+    try {
+      await deleteGuideStage(id);
+      message.success("Guide stage deleted");
+      if (selectedPlant) loadGuideStages(selectedPlant.id);
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to delete stage"
+      );
+    }
+  };
+
+  const handleCreateSubStage = async (guideStageId: string, values: any) => {
+    try {
+      const payload = cleanGuidePayload({
+        ...values,
+        guide_stages_id: guideStageId,
+      });
+      await createSubGuideStage(payload);
+      message.success("Sub guide stage created");
+      loadStageDetail(guideStageId);
+      return true;
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to create sub stage"
+      );
+      return false;
+    }
+  };
+
+  const handleUpdateSubStage = async (id: string, guideStageId: string, values: any) => {
+    try {
+      const payload = cleanGuidePayload(values);
+      await updateSubGuideStage(id, payload);
+      message.success("Sub guide stage updated");
+      loadStageDetail(guideStageId);
+      return true;
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to update sub stage"
+      );
+      return false;
+    }
+  };
+
+  const handleDeleteSubStage = async (id: string, guideStageId: string) => {
+    try {
+      await deleteSubGuideStage(id);
+      message.success("Sub guide stage deleted");
+      loadStageDetail(guideStageId);
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to delete sub stage"
+      );
+    }
+  };
+
+  // Blog (news) under sub stage
+  const handleBlogCreateOrUpdate = async (
+    values: any,
+    subGuideStageId: string,
+    blogId?: string
+  ) => {
+    try {
+      setSaving(true);
+      const payload = {
+        ...values,
+        content: blogContent,
+        sub_guide_stages_id: subGuideStageId,
+      };
+      if (blogId) {
+        await updateNews(blogId, payload);
+        message.success("Blog updated successfully");
+      } else {
+        await createNews(payload);
+        message.success("Blog created successfully");
+      }
+      setBlogEditing(null);
+      setBlogContent("");
+      // refresh stage detail
+      const stageId = stageIdBySub(subGuideStageId);
+      if (stageId) loadStageDetail(stageId);
+      return true;
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to save blog"
+      );
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const stageIdBySub = (subId: string) => {
+    const entries = Object.values(stageDetails);
+    for (const st of entries) {
+      const found = st.sub_guide_stages?.find((s) => s.id === subId);
+      if (found) return st.id;
+    }
+    return null;
+  };
+
+  const handleBlogEdit = async (blogId: string, subGuideStageId: string) => {
+    try {
+      const detail = await getNewsDetail(blogId);
+      setBlogEditing({ ...detail.data, sub_guide_stages_id: subGuideStageId });
+      setBlogContent(detail.data.content || "");
+      setActiveTab("guide"); // ensure correct tab
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to load blog detail"
+      );
+    }
+  };
+
+  const handleBlogDelete = async (blogId: string, subGuideStageId: string) => {
+    try {
+      await deleteNews(blogId);
+      message.success("Blog deleted successfully");
+      const stageId = stageIdBySub(subGuideStageId);
+      if (stageId) loadStageDetail(stageId);
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || error?.message || "Failed to delete blog"
+      );
     }
   };
 
@@ -279,12 +547,12 @@ const Function5: React.FC = () => {
         Object.entries(values).filter(
           ([, v]) => v !== undefined && v !== null && v !== ""
         )
-      );
+      ) as any;
       if (id) {
-        await updateNews(id, payload);
+        await updateNews(id, payload as any);
         message.success("News updated successfully");
       } else {
-        await createNews(payload);
+        await createNews(payload as any);
         message.success("News created successfully");
       }
       // Reload news list
@@ -393,20 +661,20 @@ const Function5: React.FC = () => {
                 : params.pageSize;
             const res = await getNews(size);
             // Handle response structure: { data: { news: [...], total: number } }
-            let base = [];
-            if (res.data?.news && Array.isArray(res.data.news)) {
-              base = res.data.news;
-            } else if (Array.isArray(res.data)) {
-              base = res.data;
+            let base: any[] = [];
+            if ((res as any).data?.news && Array.isArray((res as any).data.news)) {
+              base = (res as any).data.news;
+            } else if (Array.isArray((res as any).data)) {
+              base = (res as any).data;
             }
-            let items = base.slice(); // clone so we can filter/slice safely
+            let items: any[] = base.slice(); // clone so we can filter/slice safely
             if (params.title) {
-              items = items.filter((n) =>
+              items = items.filter((n: any) =>
                 n.title.toLowerCase().includes(String(params.title).toLowerCase())
               );
             }
             if (params.status) {
-              items = items.filter((n) => n.status === params.status);
+              items = items.filter((n: any) => n.status === params.status);
             }
             const page = params.current || 1;
             const pageSize = params.pageSize || 10;
@@ -513,6 +781,380 @@ const Function5: React.FC = () => {
                   )}
                 />
               </Card>
+            ),
+          },
+          {
+            key: "guide",
+            label: (
+              <span>
+                <SettingOutlined />
+                Farming Guide
+              </span>
+            ),
+            children: (
+              <Flex vertical gap={16}>
+                <Card
+                  title="Plants"
+                  extra={
+                    <Button loading={plantsLoading} onClick={loadPlants}>
+                      Reload
+                    </Button>
+                  }
+                >
+                  <List
+                    grid={{ gutter: 16, column: 3 }}
+                    loading={plantsLoading}
+                    dataSource={plants}
+                    renderItem={(plant) => (
+                      <List.Item>
+                        <Card
+                          hoverable
+                          onClick={() => {
+                            setSelectedPlant(plant);
+                            loadGuideStages(plant.id);
+                          }}
+                          cover={
+                            plant.image_url ? (
+                              <img
+                                alt={plant.name}
+                                src={plant.image_url}
+                                style={{ height: 160, objectFit: "cover" }}
+                              />
+                            ) : null
+                          }
+                          style={
+                            selectedPlant?.id === plant.id
+                              ? { borderColor: "#1677ff" }
+                              : undefined
+                          }
+                        >
+                          <Card.Meta title={plant.name} description={plant.description} />
+                        </Card>
+                      </List.Item>
+                    )}
+                  />
+                </Card>
+
+                {selectedPlant ? (
+                  <Card
+                    title={`Farming Guide - ${selectedPlant.name}`}
+                    extra={
+                      <ModalForm
+                        title="Create Stage"
+                        trigger={<Button type="primary" icon={<PlusOutlined />}>Add Stage</Button>}
+                        submitter={{ submitButtonProps: { loading: stagesLoading } }}
+                        onFinish={(values) => handleCreateStage(values)}
+                      >
+                        <ProFormText
+                          name="stage_title"
+                          label="Stage Title"
+                          rules={[{ required: true, message: "Please enter stage title" }]}
+                        />
+                        <ProFormText name="description" label="Description" />
+                        <ProFormText name="image_url" label="Image URL" />
+                        <ProFormText
+                          name="start_day_offset"
+                          label="Start Day Offset"
+                          fieldProps={{ type: "number" }}
+                        />
+                        <ProFormText
+                          name="end_day_offset"
+                          label="End Day Offset"
+                          fieldProps={{ type: "number" }}
+                        />
+                      </ModalForm>
+                    }
+                  >
+                    {stagesLoading ? (
+                      <Spin />
+                    ) : guideStages.length === 0 ? (
+                      <Empty description="No guide stages yet" />
+                    ) : (
+                      <Collapse
+                        accordion
+                        onChange={(key) => {
+                          if (typeof key === "string") {
+                            loadStageDetail(key);
+                          } else if (Array.isArray(key) && key[0]) {
+                            loadStageDetail(key[0]);
+                          }
+                        }}
+                      >
+                        {guideStages.map((stage) => {
+                          const detail = stageDetails[stage.id];
+                          const subs = detail?.sub_guide_stages || [];
+                          return (
+                            <Collapse.Panel
+                              key={stage.id}
+                              header={
+                                <Space direction="vertical" size={0}>
+                                  <strong>{stage.stage_title}</strong>
+                                  <span>
+                                    Day {stage.start_day_offset ?? 0} - {stage.end_day_offset ?? "?"}
+                                  </span>
+                                </Space>
+                              }
+                              extra={
+                                <Space>
+                                  <ModalForm
+                                    title="Edit Stage"
+                                    trigger={<Button type="text" size="small" icon={<EditOutlined />} />}
+                                    initialValues={stage}
+                                    submitter={{ submitButtonProps: { loading: stagesLoading } }}
+                                    onFinish={(values) => handleUpdateStage(stage.id, values)}
+                                  >
+                                    <ProFormText
+                                      name="stage_title"
+                                      label="Stage Title"
+                                      rules={[{ required: true, message: "Please enter stage title" }]}
+                                    />
+                                    <ProFormText name="description" label="Description" />
+                                    <ProFormText name="image_url" label="Image URL" />
+                                    <ProFormText
+                                      name="start_day_offset"
+                                      label="Start Day Offset"
+                                      fieldProps={{ type: "number" }}
+                                    />
+                                    <ProFormText
+                                      name="end_day_offset"
+                                      label="End Day Offset"
+                                      fieldProps={{ type: "number" }}
+                                    />
+                                  </ModalForm>
+                                  <Popconfirm
+                                    title="Delete stage"
+                                    description="Are you sure you want to delete this stage?"
+                                    onConfirm={() => handleDeleteStage(stage.id)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                  >
+                                    <Button type="text" size="small" danger icon={<DeleteOutlined />} />
+                                  </Popconfirm>
+                                </Space>
+                              }
+                            >
+                              {stageDetailLoading === stage.id && <Spin />}
+                              <Space direction="vertical" style={{ width: "100%" }} size="large">
+                                <div>{stage.description}</div>
+                                <ModalForm
+                                  title="Add Sub Stage"
+                                  trigger={
+                                    <Button type="dashed" icon={<PlusOutlined />}>
+                                      Add Sub Stage
+                                    </Button>
+                                  }
+                                  submitter={{ submitButtonProps: { loading: stagesLoading } }}
+                                  onFinish={(values) => handleCreateSubStage(stage.id, values)}
+                                >
+                                  <ProFormText
+                                    name="title"
+                                    label="Title"
+                                    rules={[{ required: true, message: "Please enter title" }]}
+                                  />
+                                  <ProFormText
+                                    name="start_day_offset"
+                                    label="Start Day Offset"
+                                    fieldProps={{ type: "number" }}
+                                  />
+                                  <ProFormText
+                                    name="end_day_offset"
+                                    label="End Day Offset"
+                                    fieldProps={{ type: "number" }}
+                                  />
+                                </ModalForm>
+
+                                {subs.length === 0 ? (
+                                  <Empty description="No sub stages" />
+                                ) : (
+                                  <Row gutter={[16, 16]}>
+                                    {subs.map((sub) => (
+                                      <Col span={12} key={sub.id}>
+                                        <Card
+                                          title={
+                                            <Space direction="vertical" size={0}>
+                                              <strong>{sub.title}</strong>
+                                              <span>
+                                                Day {sub.start_day_offset ?? 0} -{" "}
+                                                {sub.end_day_offset ?? "?"}
+                                              </span>
+                                            </Space>
+                                          }
+                                          extra={
+                                            <Space>
+                                              <ModalForm
+                                                title="Edit Sub Stage"
+                                                trigger={
+                                                  <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<EditOutlined />}
+                                                  />
+                                                }
+                                                initialValues={sub}
+                                                submitter={{ submitButtonProps: { loading: stagesLoading } }}
+                                                onFinish={(values) =>
+                                                  handleUpdateSubStage(sub.id, stage.id, values)
+                                                }
+                                              >
+                                                <ProFormText
+                                                  name="title"
+                                                  label="Title"
+                                                  rules={[{ required: true, message: "Please enter title" }]}
+                                                />
+                                                <ProFormText
+                                                  name="start_day_offset"
+                                                  label="Start Day Offset"
+                                                  fieldProps={{ type: "number" }}
+                                                />
+                                                <ProFormText
+                                                  name="end_day_offset"
+                                                  label="End Day Offset"
+                                                  fieldProps={{ type: "number" }}
+                                                />
+                                              </ModalForm>
+                                              <Popconfirm
+                                                title="Delete sub stage"
+                                                description="Are you sure you want to delete this sub stage?"
+                                                onConfirm={() => handleDeleteSubStage(sub.id, stage.id)}
+                                                okText="Yes"
+                                                cancelText="No"
+                                              >
+                                                <Button type="text" size="small" danger icon={<DeleteOutlined />} />
+                                              </Popconfirm>
+                                            </Space>
+                                          }
+                                          actions={[
+                                            <Button
+                                              key="add-blog"
+                                              type="link"
+                                              icon={<PlusOutlined />}
+                                              onClick={() => {
+                                                setBlogEditing({
+                                                  sub_guide_stages_id: sub.id,
+                                                  status: "draft",
+                                                });
+                                                setBlogContent("");
+                                              }}
+                                            >
+                                              Add Blog
+                                            </Button>,
+                                          ]}
+                                        >
+                                          <List
+                                            dataSource={sub.blogs || []}
+                                            locale={{ emptyText: "No blogs" }}
+                                            renderItem={(blog: any) => (
+                                              <List.Item
+                                                actions={[
+                                                  <Button
+                                                    key="edit"
+                                                    type="link"
+                                                    onClick={() => handleBlogEdit(blog.id, sub.id)}
+                                                  >
+                                                    Edit
+                                                  </Button>,
+                                                  <Popconfirm
+                                                    key="delete"
+                                                    title="Delete blog"
+                                                    onConfirm={() => handleBlogDelete(blog.id, sub.id)}
+                                                  >
+                                                    <Button type="link" danger>
+                                                      Delete
+                                                    </Button>
+                                                  </Popconfirm>,
+                                                ]}
+                                              >
+                                                <List.Item.Meta
+                                                  title={blog.title}
+                                                  description={
+                                                    <Space direction="vertical">
+                                                      <span>{blog.blog_tag_name || "-"}</span>
+                                                      <Tag color={blog.status === "published" ? "green" : "default"}>
+                                                        {blog.status}
+                                                      </Tag>
+                                                    </Space>
+                                                  }
+                                                />
+                                              </List.Item>
+                                            )}
+                                          />
+                                        </Card>
+                                      </Col>
+                                    ))}
+                                  </Row>
+                                )}
+                              </Space>
+                            </Collapse.Panel>
+                          );
+                        })}
+                      </Collapse>
+                    )}
+                  </Card>
+                ) : (
+                  <Empty description="Select a plant to manage guides" />
+                )}
+
+                <ModalForm
+                  title={blogEditing?.id ? "Edit Blog" : "Create Blog"}
+                  open={!!blogEditing}
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      setBlogEditing(null);
+                      setBlogContent("");
+                    }
+                  }}
+                  submitter={{ submitButtonProps: { loading: saving } }}
+                  initialValues={blogEditing || undefined}
+                  onFinish={async (values) => {
+                    if (!blogEditing?.sub_guide_stages_id) {
+                      message.error("Missing sub guide stage");
+                      return false;
+                    }
+                    if (!blogContent.trim()) {
+                      message.error("Please enter content");
+                      return false;
+                    }
+                    return handleBlogCreateOrUpdate(
+                      { ...values },
+                      blogEditing.sub_guide_stages_id,
+                      blogEditing.id
+                    );
+                  }}
+                >
+                  <ProFormText
+                    name="title"
+                    label="Title"
+                    rules={[{ required: true, message: "Please enter title" }]}
+                  />
+                  <ProFormText name="description" label="Description" />
+                  <div style={{ marginBottom: 24 }}>
+                    <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+                      Content <span style={{ color: "#ff4d4f" }}>*</span>
+                    </label>
+                    <MdEditor
+                      value={blogContent}
+                      style={{ height: "300px" }}
+                      renderHTML={(text) => mdParser.render(text)}
+                      onChange={({ text }) => setBlogContent(text)}
+                      placeholder="Enter markdown content here..."
+                    />
+                  </div>
+                  <ProFormText name="cover_image_url" label="Cover Image URL" />
+                  <ProFormSelect
+                    name="blog_tag_id"
+                    label="Tag"
+                    options={tagOptions}
+                    placeholder="Select a tag"
+                  />
+                  <ProFormSelect
+                    name="status"
+                    label="Status"
+                    options={statusOptions}
+                    placeholder="draft/published"
+                    initialValue="draft"
+                  />
+                </ModalForm>
+              </Flex>
             ),
           },
         ]}

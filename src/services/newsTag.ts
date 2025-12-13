@@ -84,3 +84,4 @@ export async function deleteNewsTag(id: string): Promise<{ message: string }> {
   logApi("DELETE /news-tags/:id response", res);
   return res;
 }
+

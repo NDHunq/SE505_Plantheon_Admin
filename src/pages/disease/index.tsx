@@ -11,6 +11,10 @@ import React, { useRef, useState } from "react";
 import CreateDiseaseModal from "./components/CreateDiseaseModal";
 import ImportModal from "./components/ImportModal";
 import UpdateDiseaseModal from "./components/UpdateDiseaseModal";
+import MarkdownIt from "markdown-it";
+
+// Initialize markdown parser
+const mdParser = new MarkdownIt();
 
 const DiseaseTypeColors: Record<string, string> = {
   "BỆNH NẤM": "green",
@@ -236,12 +240,40 @@ const DiseaseManagement: React.FC = () => {
               {
                 title: "Mô tả",
                 dataIndex: "description",
-                valueType: "text",
+                render: (_, record) => (
+                  <div 
+                    style={{ 
+                      maxHeight: "400px", 
+                      overflow: "auto",
+                      padding: "12px",
+                      border: "1px solid #f0f0f0",
+                      borderRadius: "6px",
+                      backgroundColor: "#fafafa"
+                    }}
+                    dangerouslySetInnerHTML={{ 
+                      __html: mdParser.render(record.description || "") 
+                    }}
+                  />
+                ),
               },
               {
                 title: "Giải pháp",
                 dataIndex: "solution",
-                valueType: "text",
+                render: (_, record) => (
+                  <div 
+                    style={{ 
+                      maxHeight: "400px", 
+                      overflow: "auto",
+                      padding: "12px",
+                      border: "1px solid #f0f0f0",
+                      borderRadius: "6px",
+                      backgroundColor: "#fafafa"
+                    }}
+                    dangerouslySetInnerHTML={{ 
+                      __html: mdParser.render(record.solution || "") 
+                    }}
+                  />
+                ),
               },
               {
                 title: "Hình ảnh",

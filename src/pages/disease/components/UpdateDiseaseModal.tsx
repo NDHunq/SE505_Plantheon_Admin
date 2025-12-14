@@ -22,6 +22,12 @@ import {
   Space,
 } from "antd";
 import React, { useRef, useState } from "react";
+import MdEditor from "react-markdown-editor-lite";
+import MarkdownIt from "markdown-it";
+import "react-markdown-editor-lite/lib/index.css";
+
+// Initialize markdown parser
+const mdParser = new MarkdownIt();
 
 interface UpdateDiseaseModalProps {
   disease: Disease;
@@ -38,6 +44,12 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
   const [addingPlant, setAddingPlant] = useState(false);
   const [plantForm] = Form.useForm<CreatePlantParams>();
   const plantSelectRef = useRef<any>(null);
+  const [descriptionContent, setDescriptionContent] = useState<string>(
+    disease.description || ""
+  );
+  const [solutionContent, setSolutionContent] = useState<string>(
+    disease.solution || ""
+  );
 
   // Convert image_link array to form format
   const initialImageLinks = (disease.image_link || []).map((url) => url);
@@ -95,8 +107,8 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
               class_name: values.class_name,
               type: values.type,
               plant_name: values.plant_name,
-              description: values.description,
-              solution: values.solution,
+              description: descriptionContent,
+              solution: solutionContent,
               image_link: imageLinks,
             });
 
@@ -115,22 +127,22 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
       >
         <ProFormText
           name="name"
-          label="Disease Name"
-          placeholder="Enter disease name"
-          rules={[{ required: true, message: "Please enter disease name" }]}
+          label="Tên bệnh"
+          placeholder="Nhập tên bệnh"
+          rules={[{ required: true, message: "Vui lòng nhập tên bệnh" }]}
         />
         <ProFormText
           name="class_name"
-          label="Class Name"
-          placeholder="e.g., leaf_spot"
-          rules={[{ required: true, message: "Please enter class name" }]}
-          tooltip="Unique identifier for the disease (used in ML model)"
+          label="Tên lớp"
+          placeholder="Ví dụ: leaf_spot"
+          rules={[{ required: true, message: "Vui lòng nhập tên lớp" }]}
+          tooltip="Mã định danh duy nhất cho bệnh (dùng trong mô hình ML)"
         />
         <ProFormSelect
           name="type"
-          label="Disease Type"
-          placeholder="Select disease type"
-          rules={[{ required: true, message: "Please select disease type" }]}
+          label="Loại bệnh"
+          placeholder="Chọn loại bệnh"
+          rules={[{ required: true, message: "Vui lòng chọn loại bệnh" }]}
           options={[
             { label: "Bệnh nấm", value: "BỆNH NẤM" },
             { label: "Cây khỏe", value: "CÂY KHOẺ" },
@@ -143,8 +155,8 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
         />
         <ProFormSelect
           name="plant_name"
-          label="Plant Name"
-          placeholder="Select a plant"
+          label="Tên cây trồng"
+          placeholder="Chọn cây trồng"
           showSearch
           fieldProps={{
             ref: plantSelectRef,
@@ -156,7 +168,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
                   style={{ width: "100%", textAlign: "left", marginBottom: 4 }}
                   onClick={() => setAddPlantOpen(true)}
                 >
-                  Add new plant
+                  Thêm cây trồng mới
                 </Button>
                 <Divider style={{ margin: "4px 0" }} />
                 {menu}
@@ -175,25 +187,33 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
             }
           }}
         />
-        <ProFormTextArea
-          name="description"
-          label="Description"
-          placeholder="Describe the disease symptoms and characteristics"
-          fieldProps={{
-            rows: 4,
-          }}
-        />
-        <ProFormTextArea
-          name="solution"
-          label="Treatment/Solution"
-          placeholder="Describe how to treat or prevent this disease"
-          fieldProps={{
-            rows: 4,
-          }}
-        />
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+            Mô tả
+          </label>
+          <MdEditor
+            value={descriptionContent}
+            style={{ height: "250px" }}
+            renderHTML={(text) => mdParser.render(text)}
+            onChange={({ text }) => setDescriptionContent(text)}
+            placeholder="Mô tả triệu chứng và đặc điểm của bệnh (hỗ trợ markdown)..."
+          />
+        </div>
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+            Giải pháp/Cách điều trị
+          </label>
+          <MdEditor
+            value={solutionContent}
+            style={{ height: "250px" }}
+            renderHTML={(text) => mdParser.render(text)}
+            onChange={({ text }) => setSolutionContent(text)}
+            placeholder="Mô tả cách điều trị hoặc phòng ngừa bệnh (hỗ trợ markdown)..."
+          />
+        </div>
 
         {/* Custom Image URL List with Preview */}
-        <Form.Item label="Image URLs">
+        <Form.Item label="URL hình ảnh">
           <Form.List name="image_urls">
             {(fields, { add, remove }) => (
               <>
@@ -247,7 +267,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
                     block
                     icon={<PlusOutlined />}
                   >
-                    Add Image URL
+                    Thêm URL hình ảnh
                   </Button>
                 </Form.Item>
               </>
@@ -266,21 +286,22 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
         }}
         onOk={handleAddPlant}
         confirmLoading={addingPlant}
-        okText="Add Plant"
+        okText="Thêm cây trồng"
+        cancelText="Hủy"
         width={500}
       >
         <Form form={plantForm} layout="vertical">
           <Form.Item
             name="name"
-            label="Plant Name"
-            rules={[{ required: true, message: "Please enter plant name" }]}
+            label="Tên cây trồng"
+            rules={[{ required: true, message: "Vui lòng nhập tên cây trồng" }]}
           >
-            <Input placeholder="Enter plant name" />
+            <Input placeholder="Nhập tên cây trồng" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input.TextArea rows={3} placeholder="Describe the plant" />
+          <Form.Item name="description" label="Mô tả">
+            <Input.TextArea rows={3} placeholder="Mô tả cây trồng" />
           </Form.Item>
-          <Form.Item name="image_url" label="Image URL">
+          <Form.Item name="image_url" label="URL hình ảnh">
             <Input placeholder="https://example.com/plant.jpg" />
           </Form.Item>
           <Form.Item
@@ -292,7 +313,7 @@ const UpdateDiseaseModal: React.FC<UpdateDiseaseModalProps> = ({
             {({ getFieldValue }) => {
               const url = getFieldValue("image_url");
               return url ? (
-                <Form.Item label="Preview">
+                <Form.Item label="Xem trước">
                   <Image
                     src={url}
                     width={120}

@@ -32,9 +32,9 @@ const IntroduceRow = ({ loading, data }: IntroduceRowProps) => {
       <Col {...topColResponsiveProps}>
         <ChartCard
           variant="borderless"
-          title="Tổng Complaints"
+          title="Tổng báo cáo"
           action={
-            <Tooltip title="Tổng số scan complaints trong hệ thống">
+            <Tooltip title="Tổng số báo cáo kết quả quét trong hệ thống">
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -42,9 +42,6 @@ const IntroduceRow = ({ loading, data }: IntroduceRowProps) => {
           total={numeral(data.total_complaints).format('0,0')}
           contentHeight={46}
         >
-          <div style={{ fontSize: 14, color: '#666' }}>
-            📊 Tổng số báo cáo
-          </div>
         </ChartCard>
       </Col>
 
@@ -52,18 +49,15 @@ const IntroduceRow = ({ loading, data }: IntroduceRowProps) => {
         <ChartCard
           variant="borderless"
           loading={loading}
-          title="Đã Verify"
+          title="Đã xác minh"
           action={
-            <Tooltip title="Số complaints đã được admin xác minh">
+            <Tooltip title="Số báo cáo đã được admin xác minh">
               <InfoCircleOutlined />
             </Tooltip>
           }
           total={numeral(data.verified_complaints).format('0,0')}
           contentHeight={46}
         >
-          <div style={{ fontSize: 14, color: '#52c41a' }}>
-            ✅ Đã xử lý
-          </div>
         </ChartCard>
       </Col>
 
@@ -73,19 +67,13 @@ const IntroduceRow = ({ loading, data }: IntroduceRowProps) => {
           variant="borderless"
           title="Độ Chính Xác AI"
           action={
-            <Tooltip title="Tỷ lệ AI dự đoán đúng trong các complaints đã verify">
+            <Tooltip title="Tỷ lệ AI dự đoán đúng trong các báo cáo đã xác minh">
               <InfoCircleOutlined />
             </Tooltip>
           }
           total={`${data.ai_correct_rate.toFixed(1)}%`}
           contentHeight={46}
         >
-          <Trend flag={data.ai_correct_rate > 70 ? 'up' : 'down'}>
-            <span style={{ marginRight: 4 }}>Độ chính xác</span>
-            <span style={{ fontWeight: 500 }}>
-              {data.ai_correct_rate > 70 ? 'Tốt' : 'Cần cải thiện'}
-            </span>
-          </Trend>
         </ChartCard>
       </Col>
     </Row>

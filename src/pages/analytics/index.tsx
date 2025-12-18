@@ -188,14 +188,14 @@ const AnalyticsDashboard: React.FC = () => {
         <StatisticCard.Group direction="row" style={{ marginBottom: 24 }}>
           <StatisticCard
             statistic={{
-              title: "Tổng Complaints",
+              title: "Tổng báo cáo",
               value: overallStats.total_complaints,
               icon: "📊",
             }}
           />
           <StatisticCard
             statistic={{
-              title: "Đã Verify",
+              title: "Đã xác minh",
               value: overallStats.verified_complaints,
               status: "success",
               icon: "✅",
@@ -218,7 +218,7 @@ const AnalyticsDashboard: React.FC = () => {
         {/* Trends Chart */}
         <Col xs={24}>
           <Card
-            title="Xu Hướng Complaints"
+            title="Xu Hướng báo cáo kết quả quét"
             loading={loading}
             extra={
               <Segmented

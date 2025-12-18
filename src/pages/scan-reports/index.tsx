@@ -207,18 +207,18 @@ const ScanReportManagement: React.FC = () => {
       ),
     },
     {
-      title: "Tổng Complaints",
+      title: "Tổng Báo cáo",
       dataIndex: "complaint_count",
       key: "complaint_count",
       sorter: (a, b) => a.complaint_count - b.complaint_count,
     },
     {
-      title: "Đã Verify",
+      title: "Đã Xác minh",
       dataIndex: "verified_count",
       key: "verified_count",
     },
     {
-      title: "Confidence TB",
+      title: "Độ tin cậy TB",
       dataIndex: "avg_confidence",
       key: "avg_confidence",
       render: (val: number) => (
@@ -278,12 +278,12 @@ const ScanReportManagement: React.FC = () => {
       ),
     },
     {
-      title: "Tổng Complaints",
+      title: "Tổng Báo cáo",
       dataIndex: "complaint_count",
       key: "complaint_count",
     },
     {
-      title: "Đã Verify",
+      title: "Đã Xác minh",
       dataIndex: "verified_count",
       key: "verified_count",
     },
@@ -316,7 +316,7 @@ const ScanReportManagement: React.FC = () => {
       },
     },
     {
-      title: "AI Prediction",
+      title: "Dự đoán của AI",
       dataIndex: "predicted_disease_id",
       hideInSearch: true,
       width: 200,
@@ -342,7 +342,7 @@ const ScanReportManagement: React.FC = () => {
       ),
     },
     {
-      title: "User Suggestion",
+      title: "Gợi ý của người dùng",
       dataIndex: "user_suggested_disease_id",
       hideInSearch: true,
       width: 200,
@@ -365,7 +365,7 @@ const ScanReportManagement: React.FC = () => {
       },
     },
     {
-      title: "Verified Disease",
+      title: "Bệnh đã xác minh",
       dataIndex: "verified_disease_id",
       hideInSearch: true,
       width: 200,
@@ -389,7 +389,7 @@ const ScanReportManagement: React.FC = () => {
 
     },
     {
-      title: "Đã verify",
+      title: "Trạng thái",
       dataIndex: "is_verified",
       hideInSearch: true,
       filters: [
@@ -465,7 +465,7 @@ const ScanReportManagement: React.FC = () => {
 
       {/* Analytics Dashboard Section */}
       <GridContent>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Đang tải...</div>}>
           <IntroduceRow loading={analyticsLoading} data={overallStats} />
         </Suspense>
 
@@ -482,7 +482,7 @@ const ScanReportManagement: React.FC = () => {
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card
               variant="borderless"
-              title="🚨 Problematic Diseases (Top 10)"
+              title="🚨 Bệnh có vấn đề (Top 10)"
               loading={analyticsLoading}
             >
               <Table
@@ -497,7 +497,7 @@ const ScanReportManagement: React.FC = () => {
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card
               variant="borderless"
-              title="🏆 Top Contributors"
+              title="🏆 Người đóng góp hàng đầu"
               loading={analyticsLoading}
             >
               <Table
@@ -514,7 +514,7 @@ const ScanReportManagement: React.FC = () => {
 
       {/* Scan Reports Section */}
       <ProTable<Complaint>
-        headerTitle="Danh sách Scan Reports"
+        headerTitle="Danh sách báo cáo kết quả quét"
         actionRef={actionRef}
         rowKey="id"
         search={false}
@@ -525,7 +525,7 @@ const ScanReportManagement: React.FC = () => {
             icon={<DownloadOutlined />}
             onClick={handleExportTrainingData}
           >
-            Export Training Data
+            Xuất dữ liệu huấn luyện
           </Button>,
         ]}
         request={async (params, sort) => {
@@ -601,7 +601,7 @@ const ScanReportManagement: React.FC = () => {
                   },
                 },
                 {
-                  title: "AI Prediction",
+                  title: "Dự đoán của AI",
                   dataIndex: "predicted_disease_id",
                   render: (_, record) => (
                     <div>
@@ -619,14 +619,14 @@ const ScanReportManagement: React.FC = () => {
                             record.confidence_score > 0.7 ? "green" : "orange"
                           }
                         >
-                          Confidence: {(record.confidence_score * 100).toFixed(1)}%
+                          Độ tin cậy: {(record.confidence_score * 100).toFixed(1)}%
                         </Tag>
                       )}
                     </div>
                   ),
                 },
                 {
-                  title: "User Suggestion",
+                  title: "Gợi ý của người dùng",
                   dataIndex: "user_suggested_disease_id",
                   render: (_, record) => {
                     if (!record.user_suggested_disease && !record.user_suggested_disease_id) {
@@ -647,7 +647,7 @@ const ScanReportManagement: React.FC = () => {
                   },
                 },
                 {
-                  title: "Verified Disease (Ground Truth)",
+                  title: "Bệnh đã xác minh (Ground Truth)",
                   dataIndex: "verified_disease_id",
                   render: (_, record) => {
                     if (!record.verified_disease && !record.verified_disease_id) {
@@ -690,19 +690,19 @@ const ScanReportManagement: React.FC = () => {
                   render: (_, record) => record.admin_notes || "-",
                 },
                 {
-                  title: "Verified by",
+                  title: "Người xác minh",
                   dataIndex: "verified_by",
                   copyable: true,
                   render: (_, record) => record.verified_by || "-",
                 },
                 {
-                  title: "Verified at",
+                  title: "Thời gian xác minh",
                   dataIndex: "verified_at",
                   valueType: "dateTime",
                   render: (_, record) => record.verified_at || "-",
                 },
                 {
-                  title: "Reporter ID",
+                  title: "ID người báo cáo",
                   dataIndex: "user_id",
                   copyable: true,
                 },

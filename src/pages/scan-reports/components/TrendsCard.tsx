@@ -66,7 +66,7 @@ const TrendsCard = ({ loading, data, days, onDaysChange }: TrendsCardProps) => {
     <Card
       loading={loading}
       variant="borderless"
-      title="Xu Hướng Complaints"
+      title="Xu hướng báo cáo kết quả quét"
       extra={
         <Segmented
           options={[

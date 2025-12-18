@@ -2,6 +2,14 @@ import { request } from "@umijs/max";
 
 // ============ TYPES & INTERFACES ============
 
+export interface DiseaseInfo {
+  id: string;
+  name: string;
+  class_name: string;
+  type: string;
+  plant_name: string;
+}
+
 export type ComplaintCategory =
   | "SPAM"
   | "HARASSMENT"
@@ -9,11 +17,12 @@ export type ComplaintCategory =
   | "VIOLENCE"
   | "MISINFORMATION"
   | "INAPPROPRIATE"
+  | "WRONG_RESULT"
   | "OTHER";
 
 export type ComplaintStatus = "PENDING" | "REVIEWED" | "RESOLVED" | "REJECTED";
 
-export type TargetType = "POST" | "COMMENT";
+export type TargetType = "POST" | "COMMENT" | "SCAN";
 
 export interface Complaint {
   id: string;
@@ -28,6 +37,21 @@ export interface Complaint {
   resolved_by?: string;
   created_at: string;
   updated_at: string;
+  
+  // Scan-specific fields
+  image_url?: string;
+  predicted_disease_id?: string;
+  user_suggested_disease_id?: string;
+  verified_disease_id?: string;
+  confidence_score?: number;
+  is_verified?: boolean;
+  verified_by?: string;
+  verified_at?: string;
+  
+  // Nested disease objects (from API)
+  predicted_disease?: DiseaseInfo | null;
+  user_suggested_disease?: DiseaseInfo | null;
+  verified_disease?: DiseaseInfo | null;
 }
 
 export interface ComplaintListParams {
@@ -35,6 +59,7 @@ export interface ComplaintListParams {
   limit?: number;
   status?: ComplaintStatus;
   target_type?: TargetType;
+  is_verified?: boolean;
 }
 
 export interface ComplaintListResponse {
@@ -158,6 +183,122 @@ export async function deleteComplaint(
   });
 }
 
+/**
+ * Get unverified scan complaints (admin only)
+ * GET /complaints/unverified
+ */
+export async function getUnverifiedComplaints(params: {
+  page?: number;
+  limit?: number;
+}): Promise<ComplaintListResponse> {
+  console.log("📋 [getUnverifiedComplaints] Calling API with params:", params);
+  try {
+    const response = await request<ComplaintListResponse>(
+      "/complaints/unverified",
+      {
+        method: "GET",
+        params,
+      }
+    );
+    console.log("✅ [getUnverifiedComplaints] Success:", response);
+    return response;
+  } catch (error) {
+    console.error("❌ [getUnverifiedComplaints] Error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Verify scan complaint (admin only)
+ * POST /complaints/:id/verify
+ */
+export async function verifyComplaint(
+  id: string,
+  data: {
+    verified_disease_id: string;
+    is_verified?: boolean;
+    admin_notes?: string;
+  }
+): Promise<{ message: string; data: Complaint }> {
+  console.log("✅ [verifyComplaint] Verifying complaint:", id, data);
+  try {
+    const response = await request<{ message: string; data: Complaint }>(
+      `/complaints/${id}/verify`,
+      {
+        method: "POST",
+        data,
+      }
+    );
+    console.log("✅ [verifyComplaint] Success:", response);
+    return response;
+  } catch (error) {
+    console.error("❌ [verifyComplaint] Error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get complaints count
+ * GET /complaints/count
+ */
+export async function getComplaintsCount(params: {
+  status?: string;
+  target_type?: string;
+  is_verified?: boolean;
+}): Promise<{ data: { count: number } }> {
+  try {
+    const response = await request<{ data: { count: number } }>(
+      "/complaints/count",
+      {
+        method: "GET",
+        params,
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("❌ [getComplaintsCount] Error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Export training data for ML
+ * GET /ml/export-training-data
+ */
+export async function exportTrainingData(): Promise<{
+  message: string;
+  count: number;
+  data: Array<{
+    image_url: string;
+    predicted_disease_id: string;
+    verified_disease_id: string;
+    confidence_score: number;
+    created_at: string;
+  }>;
+}> {
+  console.log("📦 [exportTrainingData] Exporting ML training data");
+  try {
+    const response = await request<{
+      message: string;
+      count: number;
+      data: Array<{
+        image_url: string;
+        predicted_disease_id: string;
+        verified_disease_id: string;
+        confidence_score: number;
+        created_at: string;
+      }>;
+    }>("/ml/export-training-data", {
+      method: "GET",
+    });
+    console.log("✅ [exportTrainingData] Success:", response);
+    return response;
+  } catch (error) {
+    console.error("❌ [exportTrainingData] Error:", error);
+    throw error;
+  }
+}
+
 // ============ CONTENT MODERATION API FUNCTIONS ============
 
 /**
@@ -232,6 +373,7 @@ export const COMPLAINT_CATEGORIES = [
     label: "Nội dung không phù hợp",
     color: "geekblue",
   },
+  { value: "WRONG_RESULT", label: "Kết quả scan sai", color: "cyan" },
   { value: "OTHER", label: "Lý do khác", color: "default" },
 ];
 
@@ -245,4 +387,5 @@ export const COMPLAINT_STATUSES = [
 export const TARGET_TYPES = [
   { value: "POST", label: "Bài viết" },
   { value: "COMMENT", label: "Bình luận" },
+  { value: "SCAN", label: "Kết quả scan" },
 ];

@@ -68,6 +68,12 @@ export default [
     component: "./complaint",
   },
   {
+    name: "Quản lý scan reports",
+    icon: "scan",
+    path: "/scan-reports",
+    component: "./scan-reports",
+  },
+  {
     name: "Quản lý người dùng",
     icon: "user",
     path: "/users",

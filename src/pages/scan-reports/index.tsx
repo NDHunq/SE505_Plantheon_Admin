@@ -19,10 +19,10 @@ import {
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
+  GridContent,
   PageContainer,
   ProDescriptions,
   ProTable,
-  StatisticCard,
 } from "@ant-design/pro-components";
 import {
   Button,
@@ -33,25 +33,16 @@ import {
   message,
   Popconfirm,
   Row,
-  Segmented,
   Space,
   Table,
   Tag,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Line,
-  LineChart,
-  CartesianGrid,
-  Legend,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import React, { useEffect, useRef, useState, Suspense } from "react";
+import IntroduceRow from "./components/IntroduceRow";
+import TrendsCard from "./components/TrendsCard";
 import VerifyComplaintModal from "./components/VerifyComplaintModal";
 
-const { Statistic } = StatisticCard;
 
 const ScanReportManagement: React.FC = () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -267,13 +258,16 @@ const ScanReportManagement: React.FC = () => {
       render: (_, record) => (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {record.user.avatar && (
-            <Image
+            <img
               src={record.user.avatar}
               alt={record.user.full_name}
-              width={32}
-              height={32}
-              style={{ borderRadius: "50%", objectFit: "cover" }}
-              preview={false}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                objectFit: "cover",
+                flexShrink: 0,
+              }}
             />
           )}
           <div>
@@ -470,121 +464,55 @@ const ScanReportManagement: React.FC = () => {
       {contextHolder}
 
       {/* Analytics Dashboard Section */}
-      {overallStats && (
-        <StatisticCard.Group direction="row" style={{ marginBottom: 24 }}>
-          <StatisticCard
-            statistic={{
-              title: "Tổng Complaints",
-              value: overallStats.total_complaints,
-              icon: "📊",
-            }}
-          />
-          <StatisticCard
-            statistic={{
-              title: "Đã Verify",
-              value: overallStats.verified_complaints,
-              status: "success",
-              icon: "✅",
-            }}
-          />
-          <StatisticCard
-            statistic={{
-              title: "Độ Chính Xác AI",
-              value: overallStats.ai_correct_rate,
-              suffix: "%",
-              status: "default",
-              icon: "🎯",
-            }}
-          />
-        </StatisticCard.Group>
-      )}
+      <GridContent>
+        <Suspense fallback={<div>Loading...</div>}>
+          <IntroduceRow loading={analyticsLoading} data={overallStats} />
+        </Suspense>
 
-      {/* Trends Chart */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24}>
-          <Card
-            title="Xu Hướng Complaints"
+        <Suspense fallback={null}>
+          <TrendsCard
             loading={analyticsLoading}
-            extra={
-              <Segmented
-                options={[
-                  { label: "7 ngày", value: 7 },
-                  { label: "30 ngày", value: 30 },
-                  { label: "90 ngày", value: 90 },
-                ]}
-                value={trendsDays}
-                onChange={(value) => setTrendsDays(value as number)}
+            data={trends}
+            days={trendsDays}
+            onDaysChange={setTrendsDays}
+          />
+        </Suspense>
+
+        <Row gutter={24} style={{ marginBottom: 24 }}>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Card
+              variant="borderless"
+              title="🚨 Problematic Diseases (Top 10)"
+              loading={analyticsLoading}
+            >
+              <Table
+                columns={problematicColumns}
+                dataSource={problematicDiseases}
+                rowKey={(record) => record.disease.id}
+                pagination={false}
+                size="small"
               />
-            }
-          >
-            {trends.length > 0 ? (
-              <div style={{ width: '100%', height: 300 }}>
-                <LineChart 
-                  width={1000} 
-                  height={300} 
-                  data={trends} 
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={[0, 'auto']} />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="complaint_count"
-                    stroke="#1890ff"
-                    strokeWidth={2}
-                    name="Tổng Complaints"
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                    label={{ position: 'top', fill: '#1890ff', fontSize: 12 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="verified_count"
-                    stroke="#52c41a"
-                    strokeWidth={2}
-                    name="Đã Verify"
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                    label={{ position: 'bottom', fill: '#52c41a', fontSize: 12 }}
-                  />
-                </LineChart>
-              </div>
-            ) : (
-              <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
-                Không có dữ liệu
-              </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
+            </Card>
+          </Col>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Card
+              variant="borderless"
+              title="🏆 Top Contributors"
+              loading={analyticsLoading}
+            >
+              <Table
+                columns={contributorsColumns}
+                dataSource={topContributors}
+                rowKey={(record) => record.user.id}
+                pagination={false}
+                size="small"
+              />
+            </Card>
+          </Col>
+        </Row>
+      </GridContent>
 
-      {/* Problematic Diseases Table */}
-      <Card
-        title="🚨 Problematic Diseases (Top 10)"
-        style={{ marginBottom: 24 }}
-        loading={analyticsLoading}
-      >
-        <Table
-          columns={problematicColumns}
-          dataSource={problematicDiseases}
-          rowKey={(record) => record.disease.id}
-          pagination={false}
-        />
-      </Card>
-
-      {/* Top Contributors */}
-      <Card title="🏆 Top Contributors" loading={analyticsLoading} style={{ marginBottom: 24 }}>
-        <Table
-          columns={contributorsColumns}
-          dataSource={topContributors}
-          rowKey={(record) => record.user.id}
-          pagination={false}
-        />
-      </Card>
-
+      {/* Scan Reports Section */}
       <ProTable<Complaint>
         headerTitle="Danh sách Scan Reports"
         actionRef={actionRef}

@@ -1,11 +1,16 @@
 import {
   Complaint,
-  COMPLAINT_STATUSES,
   deleteComplaint,
   exportTrainingData,
   getComplaintsCount,
   getComplaints,
 } from "@/services/complaint";
+import {
+  getComplaintTrends,
+  getOverallStats,
+  getProblematicDiseases,
+  getTopContributors,
+} from "@/services/analytics";
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -20,16 +25,30 @@ import {
   StatisticCard,
 } from "@ant-design/pro-components";
 import {
-  Badge,
   Button,
+  Card,
+  Col,
   Drawer,
   Image,
   message,
   Popconfirm,
+  Row,
+  Segmented,
   Space,
+  Table,
   Tag,
 } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useRef, useState } from "react";
+import {
+  Line,
+  LineChart,
+  CartesianGrid,
+  Legend,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import VerifyComplaintModal from "./components/VerifyComplaintModal";
 
 const { Statistic } = StatisticCard;
@@ -42,8 +61,15 @@ const ScanReportManagement: React.FC = () => {
   const [stats, setStats] = useState({
     unverified: 0,
     verified: 0,
-    pending: 0,
   });
+
+  // Analytics state
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [overallStats, setOverallStats] = useState<any>(null);
+  const [trends, setTrends] = useState<any[]>([]);
+  const [trendsDays, setTrendsDays] = useState<number>(30);
+  const [problematicDiseases, setProblematicDiseases] = useState<any[]>([]);
+  const [topContributors, setTopContributors] = useState<any[]>([]);
 
   useEffect(() => {
     fetchStats();
@@ -51,21 +77,85 @@ const ScanReportManagement: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const [unverifiedRes, verifiedRes, pendingRes] = await Promise.all([
+      const [unverifiedRes, verifiedRes] = await Promise.all([
         getComplaintsCount({ is_verified: false, target_type: "SCAN" }),
         getComplaintsCount({ is_verified: true, target_type: "SCAN" }),
-        getComplaintsCount({ status: "PENDING", target_type: "SCAN" }),
       ]);
 
       setStats({
         unverified: unverifiedRes.data.count,
         verified: verifiedRes.data.count,
-        pending: pendingRes.data.count,
       });
     } catch (error) {
       console.error("Failed to fetch stats:", error);
     }
   };
+
+  // Analytics useEffects
+  useEffect(() => {
+    fetchAnalyticsData();
+  }, []);
+
+  useEffect(() => {
+    fetchTrends();
+  }, [trendsDays]);
+
+  const fetchAnalyticsData = async () => {
+    setAnalyticsLoading(true);
+    try {
+      await Promise.all([
+        fetchOverallStats(),
+        fetchTrends(),
+        fetchProblematicDiseases(),
+        fetchTopContributors(),
+      ]);
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  const fetchOverallStats = async () => {
+    try {
+      const response = await getOverallStats();
+      setOverallStats(response.data);
+    } catch (error) {
+      console.error("Failed to fetch overall stats:", error);
+    }
+  };
+
+  const fetchTrends = async () => {
+    try {
+      const response = await getComplaintTrends({ days: trendsDays });
+      const formattedData = response.data.map((item) => ({
+        ...item,
+        date: item.date.split('T')[0],
+      }));
+      setTrends(formattedData);
+    } catch (error) {
+      console.error("Failed to fetch trends:", error);
+    }
+  };
+
+  const fetchProblematicDiseases = async () => {
+    try {
+      const response = await getProblematicDiseases({ limit: 10 });
+      setProblematicDiseases(response.data);
+    } catch (error) {
+      console.error("Failed to fetch problematic diseases:", error);
+    }
+  };
+
+  const fetchTopContributors = async () => {
+    try {
+      const response = await getTopContributors({ limit: 10 });
+      setTopContributors(response.data);
+    } catch (error) {
+      console.error("Failed to fetch top contributors:", error);
+    }
+  };
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -109,10 +199,108 @@ const ScanReportManagement: React.FC = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const stat = COMPLAINT_STATUSES.find((s) => s.value === status);
-    return stat?.color || "default";
-  };
+  // Analytics table columns
+  const problematicColumns: ColumnsType<any> = [
+    {
+      title: "Tên Bệnh",
+      dataIndex: ["disease", "name"],
+      key: "disease_name",
+      ellipsis: true,
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>{record.disease.name}</div>
+          <div style={{ fontSize: 12, color: "#666" }}>
+            {record.disease.plant_name}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Tổng Complaints",
+      dataIndex: "complaint_count",
+      key: "complaint_count",
+      sorter: (a, b) => a.complaint_count - b.complaint_count,
+    },
+    {
+      title: "Đã Verify",
+      dataIndex: "verified_count",
+      key: "verified_count",
+    },
+    {
+      title: "Confidence TB",
+      dataIndex: "avg_confidence",
+      key: "avg_confidence",
+      render: (val: number) => (
+        <Tag color={val > 0.7 ? "green" : val > 0.5 ? "orange" : "red"}>
+          {(val * 100).toFixed(1)}%
+        </Tag>
+      ),
+    },
+    {
+      title: "Tỷ Lệ Lỗi",
+      dataIndex: "error_rate",
+      key: "error_rate",
+      sorter: (a, b) => a.error_rate - b.error_rate,
+      render: (val: number) => (
+        <Tag color={val > 50 ? "red" : val > 30 ? "orange" : "green"}>
+          {val.toFixed(1)}%
+        </Tag>
+      ),
+    },
+  ];
+
+  const contributorsColumns: ColumnsType<any> = [
+    {
+      title: "Hạng",
+      key: "rank",
+      width: 80,
+      render: (_, __, index) => {
+        const medals = ["🥇", "🥈", "🥉"];
+        return medals[index] || `#${index + 1}`;
+      },
+    },
+    {
+      title: "Người Dùng",
+      dataIndex: ["user", "full_name"],
+      key: "user_name",
+      ellipsis: true,
+      render: (_, record) => (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {record.user.avatar && (
+            <Image
+              src={record.user.avatar}
+              alt={record.user.full_name}
+              width={32}
+              height={32}
+              style={{ borderRadius: "50%", objectFit: "cover" }}
+              preview={false}
+            />
+          )}
+          <div>
+            <div style={{ fontWeight: 500 }}>{record.user.full_name}</div>
+            <div style={{ fontSize: 12, color: "#666" }}>@{record.user.username}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Tổng Complaints",
+      dataIndex: "complaint_count",
+      key: "complaint_count",
+    },
+    {
+      title: "Đã Verify",
+      dataIndex: "verified_count",
+      key: "verified_count",
+    },
+    {
+      title: "Đúng",
+      dataIndex: "correct_count",
+      key: "correct_count",
+    },
+  ];
+
+
 
   const columns: ProColumns<Complaint>[] = [
     {
@@ -204,44 +392,23 @@ const ScanReportManagement: React.FC = () => {
           </div>
         );
       },
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      valueType: "select",
-      valueEnum: {
-        PENDING: { text: "Chờ xử lý" },
-        REVIEWED: { text: "Đang xem xét" },
-        RESOLVED: { text: "Đã giải quyết" },
-        REJECTED: { text: "Từ chối" },
-      },
-      render: (_, record) => {
-        const statusConfig = COMPLAINT_STATUSES.find(
-          (s) => s.value === record.status
-        );
-        return (
-          <Badge
-            status={getStatusBadge(record.status) as any}
-            text={statusConfig?.label || record.status}
-          />
-        );
-      },
-      width: 140,
+
     },
     {
       title: "Đã verify",
       dataIndex: "is_verified",
-      valueType: "select",
-      valueEnum: {
-        true: { text: "Đã verify" },
-        false: { text: "Chưa verify" },
-      },
+      hideInSearch: true,
+      filters: [
+        { text: "Đã verify", value: true },
+        { text: "Chưa verify", value: false },
+      ],
+      onFilter: (value, record) => record.is_verified === value,
       render: (_, record) => (
         <Tag color={record.is_verified ? "green" : "orange"}>
           {record.is_verified ? "Đã verify" : "Chưa verify"}
         </Tag>
       ),
-      width: 120,
+      width: 140,
     },
     {
       title: "Ngày tạo",
@@ -302,37 +469,127 @@ const ScanReportManagement: React.FC = () => {
     <PageContainer>
       {contextHolder}
 
-      <StatisticCard.Group direction="row" style={{ marginBottom: 16 }}>
-        <StatisticCard
-          statistic={{
-            title: "Chưa verify",
-            value: stats.unverified,
-            status: "default",
-          }}
+      {/* Analytics Dashboard Section */}
+      {overallStats && (
+        <StatisticCard.Group direction="row" style={{ marginBottom: 24 }}>
+          <StatisticCard
+            statistic={{
+              title: "Tổng Complaints",
+              value: overallStats.total_complaints,
+              icon: "📊",
+            }}
+          />
+          <StatisticCard
+            statistic={{
+              title: "Đã Verify",
+              value: overallStats.verified_complaints,
+              status: "success",
+              icon: "✅",
+            }}
+          />
+          <StatisticCard
+            statistic={{
+              title: "Độ Chính Xác AI",
+              value: overallStats.ai_correct_rate,
+              suffix: "%",
+              status: "default",
+              icon: "🎯",
+            }}
+          />
+        </StatisticCard.Group>
+      )}
+
+      {/* Trends Chart */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24}>
+          <Card
+            title="Xu Hướng Complaints"
+            loading={analyticsLoading}
+            extra={
+              <Segmented
+                options={[
+                  { label: "7 ngày", value: 7 },
+                  { label: "30 ngày", value: 30 },
+                  { label: "90 ngày", value: 90 },
+                ]}
+                value={trendsDays}
+                onChange={(value) => setTrendsDays(value as number)}
+              />
+            }
+          >
+            {trends.length > 0 ? (
+              <div style={{ width: '100%', height: 300 }}>
+                <LineChart 
+                  width={1000} 
+                  height={300} 
+                  data={trends} 
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 'auto']} />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="complaint_count"
+                    stroke="#1890ff"
+                    strokeWidth={2}
+                    name="Tổng Complaints"
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                    label={{ position: 'top', fill: '#1890ff', fontSize: 12 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="verified_count"
+                    stroke="#52c41a"
+                    strokeWidth={2}
+                    name="Đã Verify"
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                    label={{ position: 'bottom', fill: '#52c41a', fontSize: 12 }}
+                  />
+                </LineChart>
+              </div>
+            ) : (
+              <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                Không có dữ liệu
+              </div>
+            )}
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Problematic Diseases Table */}
+      <Card
+        title="🚨 Problematic Diseases (Top 10)"
+        style={{ marginBottom: 24 }}
+        loading={analyticsLoading}
+      >
+        <Table
+          columns={problematicColumns}
+          dataSource={problematicDiseases}
+          rowKey={(record) => record.disease.id}
+          pagination={false}
         />
-        <StatisticCard
-          statistic={{
-            title: "Đã verify",
-            value: stats.verified,
-            status: "success",
-          }}
+      </Card>
+
+      {/* Top Contributors */}
+      <Card title="🏆 Top Contributors" loading={analyticsLoading} style={{ marginBottom: 24 }}>
+        <Table
+          columns={contributorsColumns}
+          dataSource={topContributors}
+          rowKey={(record) => record.user.id}
+          pagination={false}
         />
-        <StatisticCard
-          statistic={{
-            title: "Chờ xử lý",
-            value: stats.pending,
-            status: "processing",
-          }}
-        />
-      </StatisticCard.Group>
+      </Card>
 
       <ProTable<Complaint>
         headerTitle="Danh sách Scan Reports"
         actionRef={actionRef}
         rowKey="id"
-        search={{
-          labelWidth: 120,
-        }}
+        search={false}
         toolBarRender={() => [
           <Button
             key="export"
@@ -353,8 +610,6 @@ const ScanReportManagement: React.FC = () => {
               page: params.current || 1,
               limit: params.pageSize || 10,
               target_type: "SCAN",
-              status: params.status,
-              is_verified: params.is_verified,
             });
 
             console.log("✅ [Scan Report Page] Got response:", response);
@@ -493,21 +748,7 @@ const ScanReportManagement: React.FC = () => {
                     </Tag>
                   ),
                 },
-                {
-                  title: "Trạng thái",
-                  dataIndex: "status",
-                  render: (_, record) => {
-                    const statusConfig = COMPLAINT_STATUSES.find(
-                      (s) => s.value === record.status
-                    );
-                    return (
-                      <Badge
-                        status={getStatusBadge(record.status) as any}
-                        text={statusConfig?.label || record.status}
-                      />
-                    );
-                  },
-                },
+
                 {
                   title: "Nội dung complaint",
                   dataIndex: "content",

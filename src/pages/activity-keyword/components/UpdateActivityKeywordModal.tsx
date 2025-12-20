@@ -49,14 +49,14 @@ const UpdateActivityKeywordModal: React.FC<UpdateActivityKeywordModalProps> = ({
         const currentIds = currentDiseasesResponse.data.map((d) => d.id);
         setCurrentDiseaseIds(currentIds);
       } catch (error) {
-        message.error("Failed to load diseases");
+        message.error("Không thể tải danh sách bệnh");
       }
     };
     fetchData();
   }, [keyword.id]);
   return (
     <ModalForm<UpdateActivityKeywordParams>
-      title="Update Activity Keyword"
+      title="Cập Nhật Từ Khóa Hoạt Động"
       trigger={trigger}
       width={600}
       modalProps={{
@@ -94,7 +94,7 @@ const UpdateActivityKeywordModal: React.FC<UpdateActivityKeywordModalProps> = ({
           const errorMsg =
             error?.response?.data?.error ||
             error?.message ||
-            "Failed to update activity keyword";
+            "Không thể cập nhật từ khóa hoạt động";
           message.error(errorMsg);
           return false;
         } finally {
@@ -104,58 +104,58 @@ const UpdateActivityKeywordModal: React.FC<UpdateActivityKeywordModalProps> = ({
     >
       <ProFormText
         name="name"
-        label="Keyword Name"
-        placeholder="e.g., Phun thuốc trừ sâu"
-        rules={[{ required: true, message: "Please enter keyword name" }]}
+        label="Tên Từ Khóa"
+        placeholder="Ví dụ: Phun thuốc trừ sâu"
+        rules={[{ required: true, message: "Vui lòng nhập tên từ khóa" }]}
       />
       <ProFormSelect
         name="type"
-        label="Keyword Type"
-        placeholder="Select keyword type"
-        rules={[{ required: true, message: "Please select keyword type" }]}
+        label="Loại Từ Khóa"
+        placeholder="Chọn loại từ khóa"
+        rules={[{ required: true, message: "Vui lòng chọn loại từ khóa" }]}
         options={[
-          { label: "Technique", value: "TECHNIQUE" },
-          { label: "Climate", value: "CLIMATE" },
-          { label: "Disease", value: "DISEASE" },
-          { label: "Other", value: "OTHER" },
-          { label: "Expense", value: "EXPENSE" },
-          { label: "Income", value: "INCOME" },
+          { label: "Kỹ Thuật", value: "TECHNIQUE" },
+          { label: "Khí Hậu", value: "CLIMATE" },
+          { label: "Bệnh", value: "DISEASE" },
+          { label: "Khác", value: "OTHER" },
+          { label: "Chi Phí", value: "EXPENSE" },
+          { label: "Thu Nhập", value: "INCOME" },
         ]}
       />
       <ProFormTextArea
         name="description"
-        label="Description"
-        placeholder="Describe the activity"
+        label="Mô Tả"
+        placeholder="Mô tả hoạt động"
         fieldProps={{
           rows: 3,
         }}
       />
       <ProFormDigit
         name="base_days_offset"
-        label="Base Days Offset"
-        tooltip="Number of days offset for scheduling"
+        label="Số Ngày Lệch"
+        tooltip="Khoảng cách giữa ngày thực hiện hoạt động và ngày quét bệnh"
         min={0}
         fieldProps={{ precision: 0 }}
       />
       <ProFormDigit
         name="hour_time"
-        label="Start Hour"
-        tooltip="Start hour (0-23)"
+        label="Giờ Bắt Đầu"
+        tooltip="Giờ bắt đầu (0-23)"
         min={0}
         max={23}
         fieldProps={{ precision: 0 }}
       />
       <ProFormDigit
         name="time_duration"
-        label="Duration (hours)"
-        tooltip="Duration in hours"
+        label="Thời Lượng (giờ)"
+        tooltip="Thời lượng tính bằng giờ"
         min={0}
         fieldProps={{ precision: 0, step: 0.5 }}
       />
       <ProFormSelect
         name="disease_ids"
-        label="Linked Diseases"
-        placeholder="Select diseases"
+        label="Bệnh Liên Kết"
+        placeholder="Chọn bệnh"
         mode="multiple"
         options={diseases}
         fieldProps={{

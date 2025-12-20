@@ -59,8 +59,8 @@ import { BlogTag, getNewsTags } from "@/services/newsTag";
 
 const mdParser = new MarkdownIt();
 const statusOptions = [
-  { label: "Draft", value: "draft" },
-  { label: "Published", value: "published" },
+  { label: "Bản Nháp", value: "draft" },
+  { label: "Đã Xuất Bản", value: "published" },
 ];
 
 const FarmingGuide: React.FC = () => {
@@ -133,7 +133,7 @@ const FarmingGuide: React.FC = () => {
       const res = await getPlants();
       setPlants(res.data.plants || []);
     } catch (error: any) {
-      message.error("Failed to load plants");
+      message.error("Không thể tải danh sách cây trồng");
     } finally {
       setPlantsLoading(false);
     }
@@ -159,7 +159,7 @@ const FarmingGuide: React.FC = () => {
       }
       setStageDetails({});
     } catch (error: any) {
-      message.error("Failed to load guide stages");
+      message.error("Không thể tải các giai đoạn hướng dẫn");
     } finally {
       setStagesLoading(false);
     }
@@ -172,7 +172,7 @@ const FarmingGuide: React.FC = () => {
       const payload = (res as any)?.data || res;
       setStageDetails((prev) => ({ ...prev, [stageId]: payload }));
     } catch (error: any) {
-      message.error("Failed to load stage detail");
+      message.error("Không thể tải chi tiết giai đoạn");
     } finally {
       setStageDetailLoading(null);
     }
@@ -187,7 +187,7 @@ const FarmingGuide: React.FC = () => {
       loadGuideStages(selectedPlant.id);
       return true;
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to create stage");
+      message.error(error?.response?.data?.message || error?.message || "Không thể tạo giai đoạn");
       return false;
     }
   };
@@ -200,7 +200,7 @@ const FarmingGuide: React.FC = () => {
       if (selectedPlant) loadGuideStages(selectedPlant.id);
       return true;
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to update stage");
+      message.error(error?.response?.data?.message || error?.message || "Không thể cập nhật giai đoạn");
       return false;
     }
   };
@@ -211,7 +211,7 @@ const FarmingGuide: React.FC = () => {
       message.success("Xóa giai đoạn hướng dẫn thành công");
       if (selectedPlant) loadGuideStages(selectedPlant.id);
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to delete stage");
+      message.error(error?.response?.data?.message || error?.message || "Không thể xóa giai đoạn");
     }
   };
 
@@ -223,7 +223,7 @@ const FarmingGuide: React.FC = () => {
       loadStageDetail(guideStageId);
       return true;
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to create sub stage");
+      message.error(error?.response?.data?.message || error?.message || "Không thể tạo giai đoạn phụ");
       return false;
     }
   };
@@ -236,7 +236,7 @@ const FarmingGuide: React.FC = () => {
       loadStageDetail(guideStageId);
       return true;
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to update sub stage");
+      message.error(error?.response?.data?.message || error?.message || "Không thể cập nhật giai đoạn phụ");
       return false;
     }
   };
@@ -247,7 +247,7 @@ const FarmingGuide: React.FC = () => {
       message.success("Xóa giai đoạn phụ thành công");
       loadStageDetail(guideStageId);
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to delete sub stage");
+      message.error(error?.response?.data?.message || error?.message || "Không thể xóa giai đoạn phụ");
     }
   };
 
@@ -288,7 +288,7 @@ const FarmingGuide: React.FC = () => {
       if (stageId) loadStageDetail(stageId);
       return true;
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to save blog");
+      message.error(error?.response?.data?.message || error?.message || "Không thể lưu bài viết");
       return false;
     } finally {
       setSaving(false);
@@ -297,7 +297,7 @@ const FarmingGuide: React.FC = () => {
 
   const handleBlogEdit = async (blogId?: string, subGuideStageId?: string) => {
     if (!blogId) {
-      message.error("Missing blog id");
+      message.error("Thiếu ID bài viết");
       return;
     }
     try {
@@ -305,13 +305,13 @@ const FarmingGuide: React.FC = () => {
       setBlogEditing({ ...detail.data, sub_guide_stages_id: subGuideStageId });
       setBlogContent(detail.data.content || "");
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to load blog detail");
+      message.error(error?.response?.data?.message || error?.message || "Không thể tải chi tiết bài viết");
     }
   };
 
   const handleBlogDelete = async (blogId?: string, subGuideStageId?: string) => {
     if (!blogId) {
-      message.error("Missing blog id");
+      message.error("Thiếu ID bài viết");
       return;
     }
     try {
@@ -320,13 +320,13 @@ const FarmingGuide: React.FC = () => {
       const stageId = stageIdBySub(subGuideStageId);
       if (stageId) loadStageDetail(stageId);
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to delete blog");
+      message.error(error?.response?.data?.message || error?.message || "Không thể xóa bài viết");
     }
   };
 
   const handleBlogView = async (blogId?: string, subGuideStageId?: string) => {
     if (!blogId) {
-      message.error("Missing blog id");
+      message.error("Thiếu ID bài viết");
       return;
     }
     try {
@@ -334,7 +334,7 @@ const FarmingGuide: React.FC = () => {
       const detail = await getNewsDetail(blogId);
       setBlogViewing({ ...detail.data, sub_guide_stages_id: subGuideStageId });
     } catch (error: any) {
-      message.error(error?.response?.data?.message || error?.message || "Failed to load blog detail");
+      message.error(error?.response?.data?.message || error?.message || "Không thể tải chi tiết bài viết");
     } finally {
       setBlogViewingLoading(false);
     }
@@ -343,25 +343,25 @@ const FarmingGuide: React.FC = () => {
   return (
     <PageContainer
       header={{
-        title: "Farming Guide",
-        subTitle: "Manage guide stages, sub stages, and blogs per plant",
+        title: "Mẹo Canh Tác",
+        subTitle: "Quản lý các giai đoạn hướng dẫn, giai đoạn phụ và bài viết cho từng cây trồng",
         avatar: { icon: <SettingOutlined /> },
       }}
     >
       <Flex vertical gap={16}>
         {!selectedPlant ? (
           <Card
-            title="Plants"
+            title="Cây Trồng"
             extra={
               <Space>
                 <Input.Search
                   allowClear
-                  placeholder="Search plants"
+                  placeholder="Tìm kiếm cây trồng"
                   onChange={(e) => setPlantSearch(e.target.value)}
                   style={{ width: 220 }}
                 />
                 <Button loading={plantsLoading} onClick={loadPlants}>
-                  Reload
+                  Tải Lại
                 </Button>
               </Space>
             }
@@ -371,7 +371,7 @@ const FarmingGuide: React.FC = () => {
               grid={{ gutter: 24, column: 3 }}
               loading={plantsLoading}
               dataSource={filteredPlants}
-              locale={{ emptyText: <Empty description="No plants" /> }}
+              locale={{ emptyText: <Empty description="Không có cây trồng" /> }}
               renderItem={(plant: Plant) => (
                 <List.Item>
                   <Card
@@ -382,7 +382,7 @@ const FarmingGuide: React.FC = () => {
                     }}
                     actions={[
                       <span key="guide">
-                        <CheckCircleOutlined /> Guide
+                        <CheckCircleOutlined /> Hướng Dẫn
                       </span>,
                     ]}
                     style={
@@ -409,7 +409,7 @@ const FarmingGuide: React.FC = () => {
                       title={plant.name}
                       description={
                         <span style={{ color: "#666" }}>
-                          {plant.description || "No description"}
+                          {plant.description || "Không có mô tả"}
                         </span>
                       }
                     />
@@ -420,7 +420,7 @@ const FarmingGuide: React.FC = () => {
           </Card>
         ) : (
           <Card
-            title={`Farming Guide - ${selectedPlant.name}`}
+            title={`Mẹo canh tác - ${selectedPlant.name}`}
             extra={
               <Space>
                 <Button
@@ -434,23 +434,23 @@ const FarmingGuide: React.FC = () => {
                     setBlogContent("");
                   }}
                 >
-                  Back to Plants
+                  Quay Lại Danh Sách Cây
                 </Button>
                 <ModalForm
-                  title="Create Stage"
-                  trigger={<Button type="primary" icon={<PlusOutlined />}>Add Stage</Button>}
+                  title="Tạo Giai Đoạn"
+                  trigger={<Button type="primary" icon={<PlusOutlined />}>Thêm Giai Đoạn</Button>}
                   submitter={{ submitButtonProps: { loading: stagesLoading } }}
                   onFinish={(values) => handleCreateStage(values)}
                 >
                   <ProFormText
                     name="stage_title"
-                    label="Stage Title"
-                    rules={[{ required: true, message: "Please enter stage title" }]}
+                    label="Tiêu Đề Giai Đoạn"
+                    rules={[{ required: true, message: "Vui lòng nhập tiêu đề giai đoạn" }]}
                   />
-                  <ProFormText name="description" label="Description" />
-                  <ProFormText name="image_url" label="Image URL" />
-                  <ProFormDigit name="start_day_offset" label="Start Day Offset" />
-                  <ProFormDigit name="end_day_offset" label="End Day Offset" />
+                  <ProFormText name="description" label="Mô Tả" />
+                  <ProFormText name="image_url" label="URL Hình Ảnh" />
+                  <ProFormDigit name="start_day_offset" label="Ngày Bắt Đầu" />
+                  <ProFormDigit name="end_day_offset" label="Ngày Kết Thúc" />
                 </ModalForm>
               </Space>
             }
@@ -459,7 +459,7 @@ const FarmingGuide: React.FC = () => {
             {stagesLoading ? (
               <Spin />
             ) : guideStages.length === 0 ? (
-              <Empty description="No guide stages yet" />
+              <Empty description="Chưa có giai đoạn hướng dẫn" />
             ) : (
               <Flex gap={16} vertical={false}>
                 <Card style={{ width: 300 }} bodyStyle={{ padding: 12 }}>
@@ -477,16 +477,16 @@ const FarmingGuide: React.FC = () => {
                     }}
                     items={guideStages.map((stage) => ({
                       title: stage.stage_title,
-                      subTitle: `Day ${stage.start_day_offset ?? 0} - ${stage.end_day_offset ?? "?"}`,
+                      subTitle: `Ngày ${stage.start_day_offset ?? 0} - ${stage.end_day_offset ?? "?"}`,
                       description: stage.description,
                     }))}
                   />
                   <div style={{ marginTop: 12 }}>
                     <ModalForm
-                      title="Create Stage"
+                      title="Tạo Giai Đoạn"
                       trigger={
                         <Button block type="dashed" icon={<PlusOutlined />}>
-                          Add Stage
+                          Thêm Giai Đoạn
                         </Button>
                       }
                       submitter={{ submitButtonProps: { loading: stagesLoading } }}
@@ -494,13 +494,13 @@ const FarmingGuide: React.FC = () => {
                     >
                       <ProFormText
                         name="stage_title"
-                        label="Stage Title"
-                        rules={[{ required: true, message: "Please enter stage title" }]}
+                        label="Tiêu Đề Giai Đoạn"
+                        rules={[{ required: true, message: "Vui lòng nhập tiêu đề giai đoạn" }]}
                       />
-                      <ProFormText name="description" label="Description" />
-                      <ProFormText name="image_url" label="Image URL" />
-                      <ProFormDigit name="start_day_offset" label="Start Day Offset" />
-                      <ProFormDigit name="end_day_offset" label="End Day Offset" />
+                      <ProFormText name="description" label="Mô Tả" />
+                      <ProFormText name="image_url" label="URL Hình Ảnh" />
+                      <ProFormDigit name="start_day_offset" label="Ngày Bắt Đầu" />
+                      <ProFormDigit name="end_day_offset" label="Ngày Kết Thúc" />
                     </ModalForm>
                   </div>
                 </Card>
@@ -509,7 +509,7 @@ const FarmingGuide: React.FC = () => {
                   {selectedStageId ? (
                     (() => {
                       const stage = guideStages.find((s) => s.id === selectedStageId);
-                      if (!stage) return <Empty description="Select a stage" />;
+                      if (!stage) return <Empty description="Chọn một giai đoạn" />;
                       const detail = stageDetails[selectedStageId];
                       const subs = detail?.sub_guide_stages || [];
                       return (
@@ -525,7 +525,7 @@ const FarmingGuide: React.FC = () => {
                                   <span style={{ color: "#666" }}>{stage.description}</span>
                                 )}
                                 <span style={{ color: "#666" }}>
-                                  Day {stage.start_day_offset ?? 0} - {stage.end_day_offset ?? "?"}
+                                  Ngày {stage.start_day_offset ?? 0} - {stage.end_day_offset ?? "?"}
                                 </span>
                               </Space>
                             </Space>
@@ -533,7 +533,7 @@ const FarmingGuide: React.FC = () => {
                           extra={
                             <Space>
                               <ModalForm
-                                title="Edit Stage"
+                                title="Chỉnh Sửa Giai Đoạn"
                                 trigger={<Button type="text" size="small" icon={<EditOutlined />} />}
                                 initialValues={stage}
                                 submitter={{ submitButtonProps: { loading: stagesLoading } }}
@@ -541,20 +541,20 @@ const FarmingGuide: React.FC = () => {
                               >
                                 <ProFormText
                                   name="stage_title"
-                                  label="Stage Title"
-                                  rules={[{ required: true, message: "Please enter stage title" }]}
+                                  label="Tiêu Đề Giai Đoạn"
+                                  rules={[{ required: true, message: "Vui lòng nhập tiêu đề giai đoạn" }]}
                                 />
-                                <ProFormText name="description" label="Description" />
-                                <ProFormText name="image_url" label="Image URL" />
-                                <ProFormDigit name="start_day_offset" label="Start Day Offset" />
-                                <ProFormDigit name="end_day_offset" label="End Day Offset" />
+                                <ProFormText name="description" label="Mô Tả" />
+                                <ProFormText name="image_url" label="URL Hình Ảnh" />
+                                <ProFormDigit name="start_day_offset" label="Ngày Bắt Đầu" />
+                                <ProFormDigit name="end_day_offset" label="Ngày Kết Thúc" />
                               </ModalForm>
                               <Popconfirm
-                                title="Delete stage"
-                                description="Are you sure you want to delete this stage?"
+                                title="Xóa giai đoạn"
+                                description="Bạn có chắc chắn muốn xóa giai đoạn này?"
                                 onConfirm={() => handleDeleteStage(stage.id)}
-                                okText="Yes"
-                                cancelText="No"
+                                okText="Có"
+                                cancelText="Không"
                               >
                                 <Button type="text" size="small" danger icon={<DeleteOutlined />} />
                               </Popconfirm>
@@ -565,7 +565,7 @@ const FarmingGuide: React.FC = () => {
                             {stageDetailLoading === selectedStageId ? (
                               <Spin />
                             ) : subs.length === 0 ? (
-                              <Empty description="No sub stages" />
+                              <Empty description="Không có giai đoạn phụ" />
                             ) : (
                               <List
                                 grid={{ gutter: 16, column: 2 }}
@@ -574,7 +574,7 @@ const FarmingGuide: React.FC = () => {
                                   sub.__add ? (
                                     <List.Item key="add-sub-stage">
                                       <ModalForm
-                                        title="Add Sub Stage"
+                                        title="Thêm Giai Đoạn Phụ"
                                         trigger={
                                           <Card
                                             hoverable
@@ -588,7 +588,7 @@ const FarmingGuide: React.FC = () => {
                                           >
                                             <Space direction="vertical" align="center">
                                               <PlusOutlined />
-                                              <span>Add Sub Stage</span>
+                                              <span>Thêm Giai Đoạn Phụ</span>
                                             </Space>
                                           </Card>
                                         }
@@ -597,11 +597,11 @@ const FarmingGuide: React.FC = () => {
                                       >
                                         <ProFormText
                                           name="title"
-                                          label="Title"
-                                          rules={[{ required: true, message: "Please enter title" }]}
+                                          label="Tiêu Đề"
+                                          rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
                                         />
-                                        <ProFormDigit name="start_day_offset" label="Start Day Offset" />
-                                        <ProFormDigit name="end_day_offset" label="End Day Offset" />
+                                        <ProFormDigit name="start_day_offset" label="Ngày Bắt Đầu" />
+                                        <ProFormDigit name="end_day_offset" label="Ngày Kết Thúc" />
                                       </ModalForm>
                                     </List.Item>
                                   ) : (
@@ -614,17 +614,17 @@ const FarmingGuide: React.FC = () => {
                                             <Tag color="purple">#{idx + 1}</Tag>
                                             <strong>{sub.title}</strong>
                                             <Tag color="blue">
-                                              Day {sub.start_day_offset ?? 0} - {sub.end_day_offset ?? "?"}
+                                              Ngày {sub.start_day_offset ?? 0} - {sub.end_day_offset ?? "?"}
                                             </Tag>
                                             <Tag color="geekblue">
-                                              {sub.blogs?.length || 0} Blogs
+                                              {sub.blogs?.length || 0} Bài Viết
                                             </Tag>
                                           </Space>
                                         }
                                         extra={
                                           <Space>
                                             <ModalForm
-                                              title="Edit Sub Stage"
+                                              title="Chỉnh Sửa Giai Đoạn Phụ"
                                               trigger={<Button type="text" size="small" icon={<EditOutlined />} />}
                                               initialValues={sub}
                                               submitter={{ submitButtonProps: { loading: stagesLoading } }}
@@ -632,18 +632,18 @@ const FarmingGuide: React.FC = () => {
                                             >
                                               <ProFormText
                                                 name="title"
-                                                label="Title"
-                                                rules={[{ required: true, message: "Please enter title" }]}
+                                                label="Tiêu Đề"
+                                                rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
                                               />
-                                              <ProFormDigit name="start_day_offset" label="Start Day Offset" />
-                                              <ProFormDigit name="end_day_offset" label="End Day Offset" />
+                                              <ProFormDigit name="start_day_offset" label="Ngày Bắt Đầu" />
+                                              <ProFormDigit name="end_day_offset" label="Ngày Kết Thúc" />
                                             </ModalForm>
                                             <Popconfirm
-                                              title="Delete sub stage"
-                                              description="Are you sure you want to delete this sub stage?"
+                                              title="Xóa giai đoạn phụ"
+                                              description="Bạn có chắc chắn muốn xóa giai đoạn phụ này?"
                                               onConfirm={() => handleDeleteSubStage(sub.id, stage.id)}
-                                              okText="Yes"
-                                              cancelText="No"
+                                              okText="Có"
+                                              cancelText="Không"
                                             >
                                               <Button type="text" size="small" danger icon={<DeleteOutlined />} />
                                             </Popconfirm>
@@ -662,14 +662,14 @@ const FarmingGuide: React.FC = () => {
                                               setBlogContent("");
                                             }}
                                           >
-                                            Add Blog
+                                            Thêm Bài Viết
                                           </Button>,
                                         ]}
                                       >
                                         <List
                                           grid={{ gutter: 12, column: 3 }}
                                           dataSource={sub.blogs || []}
-                                          locale={{ emptyText: "No blogs" }}
+                                          locale={{ emptyText: "Không có bài viết" }}
                                           renderItem={(blog: any) => {
                                             const blogId = getBlogId(blog);
                                             return (
@@ -698,11 +698,11 @@ const FarmingGuide: React.FC = () => {
                                                       }}
                                                       disabled={!blogId}
                                                     >
-                                                      Edit
+                                                      Sửa
                                                     </Button>,
                                                     <Popconfirm
                                                       key="delete"
-                                                      title="Delete blog"
+                                                      title="Xóa bài viết"
                                                       onConfirm={(e) => {
                                                         e?.stopPropagation?.();
                                                         handleBlogDelete(blogId, sub.id);
@@ -715,7 +715,7 @@ const FarmingGuide: React.FC = () => {
                                                         disabled={!blogId}
                                                         onClick={(e) => e.stopPropagation()}
                                                       >
-                                                        Delete
+                                                        Xóa
                                                       </Button>
                                                     </Popconfirm>,
                                                   ]}
@@ -750,7 +750,7 @@ const FarmingGuide: React.FC = () => {
                       );
                     })()
                   ) : (
-                    <Empty description="Select a stage" />
+                    <Empty description="Chọn một giai đoạn" />
                   )}
                 </Flex>
               </Flex>
@@ -759,7 +759,7 @@ const FarmingGuide: React.FC = () => {
         )}
 
         <ModalForm
-          title={blogEditing?.id ? "Edit Blog" : "Create Blog"}
+          title={blogEditing?.id ? "Chỉnh Sửa Bài Viết" : "Tạo Bài Viết"}
           open={!!blogEditing}
           onOpenChange={(open) => {
             if (!open) {
@@ -771,11 +771,11 @@ const FarmingGuide: React.FC = () => {
           initialValues={blogEditing || undefined}
           onFinish={async (values) => {
             if (!blogEditing?.sub_guide_stages_id) {
-              message.error("Missing sub guide stage");
+              message.error("Thiếu giai đoạn phụ hướng dẫn");
               return false;
             }
             if (!blogContent.trim()) {
-              message.error("Please enter content");
+              message.error("Vui lòng nhập nội dung");
               return false;
             }
             return handleBlogCreateOrUpdate(
@@ -787,42 +787,42 @@ const FarmingGuide: React.FC = () => {
         >
           <ProFormText
             name="title"
-            label="Title"
-            rules={[{ required: true, message: "Please enter title" }]}
+            label="Tiêu Đề"
+            rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
           />
           <ProFormText
             name="sub_guide_stages_id"
-            label="Sub Guide Stage ID"
+            label="ID Giai Đoạn Phụ"
             disabled
-            rules={[{ required: true, message: "Missing sub guide stage" }]}
+            rules={[{ required: true, message: "Thiếu giai đoạn phụ hướng dẫn" }]}
           />
-          <ProFormText name="description" label="Description" />
+          <ProFormText name="description" label="Mô Tả" />
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
-              Content <span style={{ color: "#ff4d4f" }}>*</span>
+              Nội Dung <span style={{ color: "#ff4d4f" }}>*</span>
             </label>
             <MdEditor
               value={blogContent}
               style={{ height: "300px" }}
               renderHTML={(text) => mdParser.render(text)}
               onChange={({ text }) => setBlogContent(text)}
-              placeholder="Enter markdown content here..."
+              placeholder="Nhập nội dung markdown tại đây..."
             />
           </div>
-          <ProFormText name="cover_image_url" label="Cover Image URL" />
+          <ProFormText name="cover_image_url" label="URL Ảnh Bìa" />
           <ProFormSelect
             name="blog_tag_id"
-            label="Tag"
+            label="Thẻ"
             options={tagOptions}
-            placeholder="Select a tag"
+            placeholder="Chọn một thẻ"
           />
         </ModalForm>
 
         <Modal
           open={!!blogViewing}
-          title={blogViewing?.title || "Blog Detail"}
+          title={blogViewing?.title || "Chi Tiết Bài Viết"}
           onCancel={() => setBlogViewing(null)}
-          footer={<Button onClick={() => setBlogViewing(null)}>Close</Button>}
+          footer={<Button onClick={() => setBlogViewing(null)}>Đóng</Button>}
           width={800}
           destroyOnClose
           confirmLoading={blogViewingLoading}
@@ -839,7 +839,7 @@ const FarmingGuide: React.FC = () => {
                     {blogViewing.status}
                   </Tag>
                   <span>
-                    Published:{" "}
+                    Xuất Bản:{" "}
                     {blogViewing.published_at
                       ? new Date(blogViewing.published_at).toLocaleString()
                       : "-"}

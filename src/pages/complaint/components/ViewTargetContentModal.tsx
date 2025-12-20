@@ -58,7 +58,7 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Failed to load content";
+        "Không thể tải nội dung";
       message.error(errorMsg);
     } finally {
       setLoading(false);
@@ -76,15 +76,15 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
         await updatePostIsDeleted(complaint.target_id, newDeletedState);
         message.success(
           newDeletedState
-            ? "Post deleted successfully"
-            : "Post restored successfully"
+            ? "Xóa bài viết thành công"
+            : "Khôi phục bài viết thành công"
         );
       } else {
         await updateCommentIsDeleted(complaint.target_id, newDeletedState);
         message.success(
           newDeletedState
-            ? "Comment deleted successfully"
-            : "Comment restored successfully"
+            ? "Xóa bình luận thành công"
+            : "Khôi phục bình luận thành công"
         );
       }
 
@@ -95,7 +95,7 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Failed to update content";
+        "Không thể cập nhật nội dung";
       message.error(errorMsg);
     } finally {
       setActionLoading(false);
@@ -108,12 +108,12 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
       dataSource={post}
       columns={[
         {
-          title: "Content",
+          title: "Nội Dung",
           dataIndex: "content",
           valueType: "text",
         },
         {
-          title: "Images",
+          title: "Hình Ảnh",
           dataIndex: "image_link",
           render: (_, record) => {
             const images = record.image_link || [];
@@ -137,7 +137,7 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
           },
         },
         {
-          title: "Tags",
+          title: "Thẻ",
           dataIndex: "tags",
           render: (_, record) => {
             const tags = record.tags || [];
@@ -152,24 +152,24 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
           },
         },
         {
-          title: "Likes",
+          title: "Lượt Thích",
           dataIndex: "like_num",
         },
         {
-          title: "Comments",
+          title: "Bình Luận",
           dataIndex: "comment_num",
         },
         {
-          title: "Status",
+          title: "Trạng Thái",
           dataIndex: "is_deleted",
           render: (_, record) => (
             <Tag color={record.is_deleted ? "red" : "green"}>
-              {record.is_deleted ? "Deleted" : "Active"}
+              {record.is_deleted ? "Đã Xóa" : "Hoạt Động"}
             </Tag>
           ),
         },
         {
-          title: "Created At",
+          title: "Ngày Tạo",
           dataIndex: "created_at",
           valueType: "dateTime",
         },
@@ -183,25 +183,25 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
       dataSource={comment}
       columns={[
         {
-          title: "Content",
+          title: "Nội Dung",
           dataIndex: "content",
           valueType: "text",
         },
         {
-          title: "Likes",
+          title: "Lượt Thích",
           dataIndex: "like_num",
         },
         {
-          title: "Status",
+          title: "Trạng Thái",
           dataIndex: "is_deleted",
           render: (_, record) => (
             <Tag color={record.is_deleted ? "red" : "green"}>
-              {record.is_deleted ? "Deleted" : "Active"}
+              {record.is_deleted ? "Đã Xóa" : "Hoạt Động"}
             </Tag>
           ),
         },
         {
-          title: "Created At",
+          title: "Ngày Tạo",
           dataIndex: "created_at",
           valueType: "dateTime",
         },
@@ -213,34 +213,34 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
     <>
       <span onClick={() => setOpen(true)}>{trigger}</span>
       <Modal
-        title={`View ${isPost ? "Post" : "Comment"} Content`}
+        title={`Xem Nội Dung ${isPost ? "Bài Viết" : "Bình Luận"}`}
         open={open}
         onCancel={() => setOpen(false)}
         width={700}
         footer={[
           <Button key="close" onClick={() => setOpen(false)}>
-            Close
+            Đóng
           </Button>,
           content && (
             <Popconfirm
               key="toggle-delete"
               title={
                 content.is_deleted
-                  ? `Restore ${isPost ? "Post" : "Comment"}`
-                  : `Delete ${isPost ? "Post" : "Comment"}`
+                  ? `Khôi Phục ${isPost ? "Bài Viết" : "Bình Luận"}`
+                  : `Xóa ${isPost ? "Bài Viết" : "Bình Luận"}`
               }
               description={
                 content.is_deleted
-                  ? `Are you sure you want to restore this ${
-                      isPost ? "post" : "comment"
-                    }?`
-                  : `Are you sure you want to delete this ${
-                      isPost ? "post" : "comment"
-                    }?`
+                  ? `Bạn có chắc chắn muốn khôi phục ${
+                      isPost ? "bài viết" : "bình luận"
+                    } này?`
+                  : `Bạn có chắc chắn muốn xóa ${
+                      isPost ? "bài viết" : "bình luận"
+                    } này?`
               }
               onConfirm={handleToggleDelete}
-              okText="Yes"
-              cancelText="No"
+              okText="Có"
+              cancelText="Không"
             >
               <Button
                 type={content.is_deleted ? "primary" : "primary"}
@@ -248,8 +248,8 @@ const ViewTargetContentModal: React.FC<ViewTargetContentModalProps> = ({
                 loading={actionLoading}
               >
                 {content.is_deleted
-                  ? `Restore ${isPost ? "Post" : "Comment"}`
-                  : `Delete ${isPost ? "Post" : "Comment"}`}
+                  ? `Khôi Phục ${isPost ? "Bài Viết" : "Bình Luận"}`
+                  : `Xóa ${isPost ? "Bài Viết" : "Bình Luận"}`}
               </Button>
             </Popconfirm>
           ),

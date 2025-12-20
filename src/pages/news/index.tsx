@@ -80,6 +80,11 @@ const statusColors: Record<NewsStatus, string> = {
 
 const mdParser = new MarkdownIt();
 
+const StatusLabels: Record<NewsStatus, string> = {
+  draft: "Bản Nháp",
+  published: "Đã Xuất Bản",
+};
+
 const Function5: React.FC = () => {
   const actionRef = useRef<ActionType | null>(null);
   const [currentRow, setCurrentRow] = useState<NewsDetail>();
@@ -116,8 +121,8 @@ const Function5: React.FC = () => {
 
   const statusOptions = useMemo(
     () => [
-      { label: "Draft", value: "draft" },
-      { label: "Published", value: "published" },
+      { label: "Bản Nháp", value: "draft" },
+      { label: "Đã Xuất Bản", value: "published" },
     ],
     []
   );
@@ -183,7 +188,7 @@ const Function5: React.FC = () => {
       setShowDetail(true);
     } catch (error: any) {
       const errMsg =
-        error?.response?.data?.message || error?.message || "Failed to load detail";
+        error?.response?.data?.message || error?.message || "Không thể tải chi tiết";
       message.error(errMsg);
     } finally {
       setViewingId(null);
@@ -197,7 +202,7 @@ const Function5: React.FC = () => {
       actionRef.current?.reload();
     } catch (error: any) {
       const errMsg =
-        error?.response?.data?.message || error?.message || "Failed to delete news";
+        error?.response?.data?.message || error?.message || "Không thể xóa tin tức";
       message.error(errMsg);
     }
   };
@@ -216,7 +221,7 @@ const Function5: React.FC = () => {
       setStageDetails({});
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to load guide stages"
+        error?.response?.data?.message || error?.message || "Không thể tải các giai đoạn hướng dẫn"
       );
     } finally {
       setStagesLoading(false);
@@ -231,7 +236,7 @@ const Function5: React.FC = () => {
       setStageDetails((prev) => ({ ...prev, [stageId]: payload }));
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to load stage detail"
+        error?.response?.data?.message || error?.message || "Không thể tải chi tiết giai đoạn"
       );
     } finally {
       setStageDetailLoading(null);
@@ -248,7 +253,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to create stage"
+        error?.response?.data?.message || error?.message || "Không thể tạo giai đoạn"
       );
       return false;
     }
@@ -263,7 +268,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to update stage"
+        error?.response?.data?.message || error?.message || "Không thể cập nhật giai đoạn"
       );
       return false;
     }
@@ -276,7 +281,7 @@ const Function5: React.FC = () => {
       if (selectedPlant) loadGuideStages(selectedPlant.id);
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to delete stage"
+        error?.response?.data?.message || error?.message || "Không thể xóa giai đoạn"
       );
     }
   };
@@ -293,7 +298,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to create sub stage"
+        error?.response?.data?.message || error?.message || "Không thể tạo giai đoạn phụ"
       );
       return false;
     }
@@ -308,7 +313,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to update sub stage"
+        error?.response?.data?.message || error?.message || "Không thể cập nhật giai đoạn phụ"
       );
       return false;
     }
@@ -321,7 +326,7 @@ const Function5: React.FC = () => {
       loadStageDetail(guideStageId);
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to delete sub stage"
+        error?.response?.data?.message || error?.message || "Không thể xóa giai đoạn phụ"
       );
     }
   };
@@ -354,7 +359,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to save blog"
+        error?.response?.data?.message || error?.message || "Không thể lưu bài viết"
       );
       return false;
     } finally {
@@ -379,7 +384,7 @@ const Function5: React.FC = () => {
       setActiveTab("guide"); // ensure correct tab
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to load blog detail"
+        error?.response?.data?.message || error?.message || "Không thể tải chi tiết bài viết"
       );
     }
   };
@@ -392,7 +397,7 @@ const Function5: React.FC = () => {
       if (stageId) loadStageDetail(stageId);
     } catch (error: any) {
       message.error(
-        error?.response?.data?.message || error?.message || "Failed to delete blog"
+        error?.response?.data?.message || error?.message || "Không thể xóa bài viết"
       );
     }
   };
@@ -412,7 +417,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       const errMsg =
-        error?.response?.data?.message || error?.message || "Failed to save tag";
+        error?.response?.data?.message || error?.message || "Không thể lưu thẻ";
       message.error(errMsg);
       return false;
     } finally {
@@ -427,14 +432,14 @@ const Function5: React.FC = () => {
       loadTags();
     } catch (error: any) {
       const errMsg =
-        error?.response?.data?.message || error?.message || "Failed to delete tag";
+        error?.response?.data?.message || error?.message || "Không thể xóa thẻ";
       message.error(errMsg);
     }
   };
 
   const columns: ProColumns<News>[] = [
     {
-      title: "Title",
+      title: "Tiêu Đề",
       dataIndex: "title",
       ellipsis: true,
       render: (dom, entity) => (
@@ -448,25 +453,25 @@ const Function5: React.FC = () => {
       ),
     },
     {
-      title: "Tag",
+      title: "Thẻ",
       dataIndex: "blog_tag_name",
       hideInSearch: true,
       render: (_, record) => record.blog_tag_name || "-",
     },
     {
-      title: "Status",
+      title: "Trạng Thái",
       dataIndex: "status",
       valueType: "select",
       valueEnum: {
-        draft: { text: "Draft", status: "Default" },
-        published: { text: "Published", status: "Success" },
+        draft: { text: "Bản Nháp", status: "Default" },
+        published: { text: "Đã Xuất Bản", status: "Success" },
       },
       render: (_, record) => (
-        <Tag color={statusColors[record.status]}>{record.status}</Tag>
+        <Tag color={statusColors[record.status]}>{StatusLabels[record.status] || record.status}</Tag>
       ),
     },
     {
-      title: "Author",
+      title: "Tác Giả",
       dataIndex: "full_name",
       render: (_, record) => (
         <Space>
@@ -478,25 +483,25 @@ const Function5: React.FC = () => {
       ),
     },
     {
-      title: "Published At",
+      title: "Ngày Xuất Bản",
       dataIndex: "published_at",
       valueType: "dateTime",
       hideInSearch: true,
     },
     {
-      title: "Created At",
+      title: "Ngày Tạo",
       dataIndex: "created_at",
       valueType: "dateTime",
       hideInSearch: true,
     },
     {
-      title: "Updated At",
+      title: "Ngày Cập Nhật",
       dataIndex: "updated_at",
       valueType: "dateTime",
       hideInSearch: true,
     },
     {
-      title: "Actions",
+      title: "Hành Động",
       valueType: "option",
       width: 200,
       render: (_, record) => [
@@ -528,11 +533,11 @@ const Function5: React.FC = () => {
           />,
         <Popconfirm
           key="delete"
-          title="Delete news"
-          description="Are you sure you want to delete this news?"
+          title="Xóa tin tức"
+          description="Bạn có chắc chắn muốn xóa tin tức này?"
           onConfirm={() => handleDelete(record.id)}
-          okText="Yes"
-          cancelText="No"
+          okText="Có"
+          cancelText="Không"
         >
           <Button type="text" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>,
@@ -560,7 +565,7 @@ const Function5: React.FC = () => {
       return true;
     } catch (error: any) {
       const errMsg =
-        error?.response?.data?.message || error?.message || "Failed to save news";
+        error?.response?.data?.message || error?.message || "Không thể lưu tin tức";
       message.error(errMsg);
       return false;
     } finally {
@@ -579,22 +584,22 @@ const Function5: React.FC = () => {
             label: (
               <span>
                 <EditOutlined />
-                News Management
+                Quản Lý Tin Tức
               </span>
             ),
             children: (
               <ProTable<News>
-        headerTitle="News Management"
+        headerTitle="Danh sách Tin Tức"
         actionRef={actionRef}
         rowKey="id"
         search={{ labelWidth: 120 }}
         toolBarRender={() => [
           <ModalForm
             key="create"
-            title="Create News"
+            title="Tạo Tin Tức"
             trigger={
               <Button type="primary" icon={<CheckCircleOutlined />}>
-                New
+                Mới
               </Button>
             }
             modalProps={{ 
@@ -607,7 +612,7 @@ const Function5: React.FC = () => {
             submitter={{ submitButtonProps: { loading: saving } }}
             onFinish={async (values) => {
               if (!createContent.trim()) {
-                message.error("Please enter content");
+                message.error("Vui lòng nhập nội dung");
                 return false;
               }
               const success = await handleUpsert({ ...values, content: createContent });
@@ -622,34 +627,34 @@ const Function5: React.FC = () => {
           >
             <ProFormText
               name="title"
-              label="Title"
-              rules={[{ required: true, message: "Please enter title" }]}
+              label="Tiêu Đề"
+              rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
             />
-            <ProFormText name="description" label="Description" />
+            <ProFormText name="description" label="Mô Tả" />
             <div style={{ marginBottom: 24 }}>
               <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
-                Content <span style={{ color: "#ff4d4f" }}>*</span>
+                Nội Dung <span style={{ color: "#ff4d4f" }}>*</span>
               </label>
               <MdEditor
                 value={createContent}
                 style={{ height: "300px" }}
                 renderHTML={(text) => mdParser.render(text)}
                 onChange={({ text }) => setCreateContent(text)}
-                placeholder="Enter markdown content here..."
+                placeholder="Nhập nội dung markdown tại đây..."
               />
             </div>
-            <ProFormText name="cover_image_url" label="Cover Image URL" />
+            <ProFormText name="cover_image_url" label="URL Ảnh Bìa" />
             <ProFormSelect
               name="blog_tag_id"
-              label="Tag"
+              label="Thẻ"
               options={tagOptions}
-              placeholder="Select a tag"
+              placeholder="Chọn một thẻ"
             />
             <ProFormSelect
               name="status"
-              label="Status"
+              label="Trạng Thái"
               options={statusOptions}
-              placeholder="draft/published"
+              placeholder="bản nháp/đã xuất bản"
             />
           </ModalForm>,
         ]}
@@ -689,7 +694,7 @@ const Function5: React.FC = () => {
             const errMsg =
               error?.response?.data?.message ||
               error?.message ||
-              "Failed to fetch news";
+              "Không thể tải tin tức";
             message.error(errMsg);
             return {
               data: [],
@@ -708,17 +713,17 @@ const Function5: React.FC = () => {
             label: (
               <span>
                 <TagOutlined />
-                Tag Management
+                Quản Lý Thẻ
               </span>
             ),
             children: (
               <Card>
                 <div style={{ marginBottom: 16 }}>
                   <ModalForm
-                    title="Create Tag"
+                    title="Tạo Thẻ"
                     trigger={
                       <Button type="primary" icon={<PlusOutlined />}>
-                        New Tag
+                        Thẻ Mới
                       </Button>
                     }
                     modalProps={{ destroyOnClose: true }}
@@ -730,8 +735,8 @@ const Function5: React.FC = () => {
                   >
                     <ProFormText
                       name="name"
-                      label="Tag Name"
-                      rules={[{ required: true, message: "Please enter tag name" }]}
+                      label="Tên Thẻ"
+                      rules={[{ required: true, message: "Vui lòng nhập tên thẻ" }]}
                     />
                   </ModalForm>
                 </div>
@@ -742,7 +747,7 @@ const Function5: React.FC = () => {
                       actions={[
                         <ModalForm
                           key="edit"
-                          title="Edit Tag"
+                          title="Chỉnh Sửa Thẻ"
                           trigger={
                             <Button type="text" size="small" icon={<EditOutlined />} />
                           }
@@ -756,17 +761,17 @@ const Function5: React.FC = () => {
                         >
                           <ProFormText
                             name="name"
-                            label="Tag Name"
-                            rules={[{ required: true, message: "Please enter tag name" }]}
+                            label="Tên Thẻ"
+                            rules={[{ required: true, message: "Vui lòng nhập tên thẻ" }]}
                           />
                         </ModalForm>,
                         <Popconfirm
                           key="delete"
-                          title="Delete tag"
-                          description="Are you sure you want to delete this tag?"
+                          title="Xóa thẻ"
+                          description="Bạn có chắc chắn muốn xóa thẻ này?"
                           onConfirm={() => handleTagDelete(tag.id)}
-                          okText="Yes"
-                          cancelText="No"
+                          okText="Có"
+                          cancelText="Không"
                         >
                           <Button type="text" size="small" danger icon={<DeleteOutlined />} />
                         </Popconfirm>,
@@ -787,7 +792,7 @@ const Function5: React.FC = () => {
       />
 
       <ModalForm
-        title="Edit News"
+        title="Chỉnh Sửa Tin Tức"
         open={!!editing}
         onOpenChange={(open) => {
           if (!open) {
@@ -816,7 +821,7 @@ const Function5: React.FC = () => {
         key={editing?.id || "edit-form"}
         onFinish={async (values) => {
           if (!editContent.trim()) {
-            message.error("Please enter content");
+            message.error("Vui lòng nhập nội dung");
             return false;
           }
           const success = await handleUpsert({ ...values, content: editContent }, editing?.id);
@@ -829,34 +834,34 @@ const Function5: React.FC = () => {
       >
         <ProFormText
           name="title"
-          label="Title"
-          rules={[{ required: true, message: "Please enter title" }]}
+          label="Tiêu Đề"
+          rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
         />
-            <ProFormText name="description" label="Description" />
+            <ProFormText name="description" label="Mô Tả" />
             <div style={{ marginBottom: 24 }}>
               <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
-                Content <span style={{ color: "#ff4d4f" }}>*</span>
+                Nội Dung <span style={{ color: "#ff4d4f" }}>*</span>
               </label>
               <MdEditor
                 value={editContent}
                 style={{ height: "300px" }}
                 renderHTML={(text) => mdParser.render(text)}
                 onChange={({ text }) => setEditContent(text)}
-                placeholder="Enter markdown content here..."
+                placeholder="Nhập nội dung markdown tại đây..."
               />
             </div>
-        <ProFormText name="cover_image_url" label="Cover Image URL" />
+        <ProFormText name="cover_image_url" label="URL Ảnh Bìa" />
         <ProFormSelect
           name="blog_tag_id"
-          label="Tag"
+          label="Thẻ"
           options={tagOptions}
-          placeholder="Select a tag"
+          placeholder="Chọn một thẻ"
         />
         <ProFormSelect
           name="status"
-          label="Status"
+          label="Trạng Thái"
           options={statusOptions}
-          placeholder="draft/published"
+          placeholder="bản nháp/đã xuất bản"
         />
       </ModalForm>
 
@@ -876,23 +881,23 @@ const Function5: React.FC = () => {
             dataSource={currentRow}
             columns={[
               {
-                title: "Title",
+                title: "Tiêu Đề",
                 dataIndex: "title",
               },
               {
-                title: "Status",
+                title: "Trạng Thái",
                 dataIndex: "status",
                 render: (_, record) => (
-                  <Tag color={statusColors[record.status]}>{record.status}</Tag>
+                  <Tag color={statusColors[record.status]}>{StatusLabels[record.status] || record.status}</Tag>
                 ),
               },
               {
-                title: "Tag",
+                title: "Thẻ",
                 dataIndex: "blog_tag_name",
                 render: (_, record) => record.blog_tag_name || "-",
               },
               {
-                title: "Author",
+                title: "Tác Giả",
                 dataIndex: "full_name",
                 render: (_, record) => (
                   <Space>
@@ -903,16 +908,16 @@ const Function5: React.FC = () => {
                   </Space>
                 ),
               },
-              { title: "Published At", dataIndex: "published_at", valueType: "dateTime" },
-              { title: "Created At", dataIndex: "created_at", valueType: "dateTime" },
-              { title: "Updated At", dataIndex: "updated_at", valueType: "dateTime" },
+              { title: "Ngày Xuất Bản", dataIndex: "published_at", valueType: "dateTime" },
+              { title: "Ngày Tạo", dataIndex: "created_at", valueType: "dateTime" },
+              { title: "Ngày Cập Nhật", dataIndex: "updated_at", valueType: "dateTime" },
               {
-                title: "Description",
+                title: "Mô Tả",
                 dataIndex: "description",
                 render: (_, record) => record.description || "-",
               },
               {
-                title: "Content",
+                title: "Nội Dung",
                 dataIndex: "content",
                 render: (_, record) => (
                   <div 

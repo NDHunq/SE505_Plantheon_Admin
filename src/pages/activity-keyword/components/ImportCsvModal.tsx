@@ -19,7 +19,7 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
 
   const handleImport = async () => {
     if (fileList.length === 0) {
-      message.error("Please select a file to import");
+      message.error("Vui lòng chọn tệp để nhập");
       return false;
     }
 
@@ -35,19 +35,19 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
 
       if (!hasErrors) {
         message.success(
-          `Successfully imported ${response.success} out of ${response.total} rows!`
+          `Nhập thành công ${response.success} trong tổng số ${response.total} dòng!`
         );
         onSuccess?.();
         return true;
       } else {
         message.warning(
-          `Imported ${response.success} out of ${response.total} rows with ${response.errors.length} errors`
+          `Đã nhập ${response.success} trong tổng số ${response.total} dòng với ${response.errors.length} lỗi`
         );
         return false;
       }
     } catch (error: any) {
       const errorMsg =
-        error?.response?.data?.error || error?.message || "Import failed";
+        error?.response?.data?.error || error?.message || "Nhập thất bại";
       message.error(errorMsg);
       return false;
     } finally {
@@ -57,18 +57,18 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
 
   const errorColumns = [
     {
-      title: "Row",
+      title: "Dòng",
       dataIndex: "row",
       key: "row",
       width: 80,
     },
     {
-      title: "Error",
+      title: "Lỗi",
       dataIndex: "error",
       key: "error",
     },
     {
-      title: "Details",
+      title: "Chi Tiết",
       dataIndex: "details",
       key: "details",
     },
@@ -76,8 +76,8 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
 
   return (
     <ModalForm
-      title="Import Keywords from CSV"
-      trigger={<Button icon={<UploadOutlined />}>Import CSV</Button>}
+      title="Nhập Từ Khóa Từ CSV"
+      trigger={<Button icon={<UploadOutlined />}>Nhập CSV</Button>}
       width={700}
       modalProps={{
         destroyOnClose: true,
@@ -88,7 +88,7 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
       }}
       submitter={{
         searchConfig: {
-          submitText: "Import",
+          submitText: "Nhập",
         },
         submitButtonProps: {
           loading: importing,
@@ -97,15 +97,15 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
       onFinish={handleImport}
     >
       <Alert
-        message="CSV Format (8 columns)"
+        message="Định Dạng CSV (8 cột)"
         description={
           <div>
-            <Text strong>Required columns:</Text>
+            <Text strong>Các cột bắt buộc:</Text>
             <br />
             <Text code>ClassName, keywordName, keywordType</Text>
             <br />
             <br />
-            <Text strong>Optional columns:</Text>
+            <Text strong>Các cột tùy chọn:</Text>
             <br />
             <Text code>
               keywordDescription, keywordDayOffset, keywordIsFreeTime,
@@ -114,8 +114,8 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
             <br />
             <br />
             <Text type="secondary">
-              Note: The import will find disease by ClassName and link the
-              keyword to it.
+              Lưu ý: Quá trình nhập sẽ tìm bệnh theo ClassName và liên kết
+              từ khóa với nó.
             </Text>
           </div>
         }
@@ -137,8 +137,8 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">Click or drag CSV file to this area</p>
-        <p className="ant-upload-hint">Support for .csv files only</p>
+        <p className="ant-upload-text">Nhấp hoặc kéo thả tệp CSV vào đây</p>
+        <p className="ant-upload-hint">Chỉ hỗ trợ tệp .csv</p>
       </Dragger>
 
       {result && (
@@ -147,8 +147,8 @@ const ImportCsvModal: React.FC<ImportCsvModalProps> = ({ onSuccess }) => {
             <Alert
               message={
                 <span>
-                  Total: {result.total} | Success:{" "}
-                  <Text type="success">{result.success}</Text> | Errors:{" "}
+                  Tổng: {result.total} | Thành công:{" "}
+                  <Text type="success">{result.success}</Text> | Lỗi:{" "}
                   <Text type="danger">{result.errors?.length || 0}</Text>
                 </span>
               }

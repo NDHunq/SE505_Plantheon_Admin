@@ -68,7 +68,7 @@ export default [
     component: "./activity-keyword",
   },
   {
-    name: "Quản lý khiếu nại",
+    name: "Quản lý báo cáo",
     icon: "flag",
     path: "/complaint",
     component: "./complaint",
@@ -86,7 +86,7 @@ export default [
     component: "./news",
   },
     {
-    name: "Hướng dẫn canh tác",
+    name: "Mẹo canh tác",
     icon: "setting",
     path: "/farming-guide",
     component: "./farming-guide",

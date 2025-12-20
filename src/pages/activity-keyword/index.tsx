@@ -26,6 +26,15 @@ const KeywordTypeColors: Record<string, string> = {
   INCOME: "green",
 };
 
+const KeywordTypeLabels: Record<string, string> = {
+  TECHNIQUE: "Kỹ Thuật",
+  CLIMATE: "Khí Hậu",
+  DISEASE: "Bệnh",
+  OTHER: "Khác",
+  EXPENSE: "Chi Phí",
+  INCOME: "Thu Nhập",
+};
+
 const ActivityKeywordManagement: React.FC = () => {
   const actionRef = useRef<ActionType | null>(null);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -41,14 +50,14 @@ const ActivityKeywordManagement: React.FC = () => {
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Failed to delete activity keyword";
+        "Không thể xóa từ khóa hoạt động";
       messageApi.error(errorMsg);
     }
   };
 
   const columns: ProColumns<ActivityKeywordWithDiseases>[] = [
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       render: (dom, entity) => (
         <a
@@ -62,45 +71,45 @@ const ActivityKeywordManagement: React.FC = () => {
       ),
     },
     {
-      title: "Type",
+      title: "Loại",
       dataIndex: "type",
       valueType: "select",
       valueEnum: {
-        TECHNIQUE: { text: "Technique" },
-        CLIMATE: { text: "Climate" },
-        DISEASE: { text: "Disease" },
-        OTHER: { text: "Other" },
-        EXPENSE: { text: "Expense" },
-        INCOME: { text: "Income" },
+        TECHNIQUE: { text: "Kỹ Thuật" },
+        CLIMATE: { text: "Khí Hậu" },
+        DISEASE: { text: "Bệnh" },
+        OTHER: { text: "Khác" },
+        EXPENSE: { text: "Chi Phí" },
+        INCOME: { text: "Thu Nhập" },
       },
       render: (_, record) => (
         <Tag color={KeywordTypeColors[record.type] || "default"}>
-          {record.type}
+          {KeywordTypeLabels[record.type] || record.type}
         </Tag>
       ),
     },
     {
-      title: "Description",
+      title: "Mô Tả",
       dataIndex: "description",
       hideInSearch: true,
       ellipsis: true,
       width: 200,
     },
     {
-      title: "Days Offset",
+      title: "Số Ngày Lệch",
       dataIndex: "base_days_offset",
       hideInSearch: true,
       width: 100,
     },
     {
-      title: "Start Hour",
+      title: "Giờ Bắt Đầu",
       dataIndex: "hour_time",
       hideInSearch: true,
       width: 100,
       render: (_, record) => `${record.hour_time}:00`,
     },
     {
-      title: "Duration (hours)",
+      title: "Thời Lượng (giờ)",
       dataIndex: "time_duration",
       hideInSearch: true,
       width: 120,
@@ -108,7 +117,7 @@ const ActivityKeywordManagement: React.FC = () => {
         record.time_duration ? `${record.time_duration}h` : "-",
     },
     {
-      title: "Diseases",
+      title: "Bệnh",
       dataIndex: "diseases",
       hideInSearch: true,
       width: 200,
@@ -120,14 +129,14 @@ const ActivityKeywordManagement: React.FC = () => {
       },
     },
     {
-      title: "Created At",
+      title: "Ngày Tạo",
       dataIndex: "created_at",
       valueType: "dateTime",
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: "Actions",
+      title: "Hành Động",
       dataIndex: "option",
       valueType: "option",
       render: (_, record) => [
@@ -149,11 +158,11 @@ const ActivityKeywordManagement: React.FC = () => {
         />,
         <Popconfirm
           key="delete"
-          title="Delete Activity Keyword"
-          description="Are you sure you want to delete this keyword?"
+          title="Xóa Từ Khóa Hoạt Động"
+          description="Bạn có chắc chắn muốn xóa từ khóa này?"
           onConfirm={() => handleDelete(record.id)}
-          okText="Yes"
-          cancelText="No"
+          okText="Có"
+          cancelText="Không"
         >
           <Button type="text" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>,
@@ -165,7 +174,7 @@ const ActivityKeywordManagement: React.FC = () => {
     <PageContainer>
       {contextHolder}
       <ProTable<ActivityKeywordWithDiseases>
-        headerTitle="Activity Keywords"
+        headerTitle="Từ Khóa Hoạt Động"
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -216,7 +225,7 @@ const ActivityKeywordManagement: React.FC = () => {
               total: queryResponse.pagination.total,
             };
           } catch (error) {
-            messageApi.error("Failed to fetch activity keywords");
+            messageApi.error("Không thể tải danh sách từ khóa hoạt động");
             return {
               data: [],
               success: false,
@@ -246,31 +255,31 @@ const ActivityKeywordManagement: React.FC = () => {
             column={1}
             dataSource={currentRow}
             columns={[
-              { title: "Name", dataIndex: "name" },
+              { title: "Tên", dataIndex: "name" },
               {
-                title: "Type",
+                title: "Loại",
                 dataIndex: "type",
                 render: (_, record) => (
                   <Tag color={KeywordTypeColors[record.type] || "default"}>
-                    {record.type}
+                    {KeywordTypeLabels[record.type] || record.type}
                   </Tag>
                 ),
               },
-              { title: "Description", dataIndex: "description" },
-              { title: "Days Offset", dataIndex: "base_days_offset" },
+              { title: "Mô Tả", dataIndex: "description" },
+              { title: "Số Ngày Lệch", dataIndex: "base_days_offset" },
               {
-                title: "Start Hour",
+                title: "Giờ Bắt Đầu",
                 dataIndex: "hour_time",
                 render: (_, record) => `${record.hour_time}:00`,
               },
               {
-                title: "Duration",
+                title: "Thời Lượng",
                 dataIndex: "time_duration",
                 render: (_, record) =>
-                  record.time_duration ? `${record.time_duration} hours` : "-",
+                  record.time_duration ? `${record.time_duration} giờ` : "-",
               },
               {
-                title: "Diseases",
+                title: "Bệnh",
                 render: (_, record) => {
                   if (!record.diseases || record.diseases.length === 0) {
                     return "-";
@@ -287,12 +296,12 @@ const ActivityKeywordManagement: React.FC = () => {
                 },
               },
               {
-                title: "Created At",
+                title: "Ngày Tạo",
                 dataIndex: "created_at",
                 valueType: "dateTime",
               },
               {
-                title: "Updated At",
+                title: "Ngày Cập Nhật",
                 dataIndex: "updated_at",
                 valueType: "dateTime",
               },

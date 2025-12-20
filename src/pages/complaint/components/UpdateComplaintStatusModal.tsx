@@ -25,7 +25,7 @@ const UpdateComplaintStatusModal: React.FC<UpdateComplaintStatusModalProps> = ({
 }) => {
   return (
     <ModalForm<UpdateComplaintStatusParams>
-      title="Update Complaint Status"
+      title="Cập Nhật Trạng Thái Báo Cáo"
       trigger={trigger}
       width={500}
       modalProps={{
@@ -42,14 +42,14 @@ const UpdateComplaintStatusModal: React.FC<UpdateComplaintStatusModalProps> = ({
             admin_notes: values.admin_notes,
           });
 
-          message.success("Cập nhật trạng thái khiếu nại thành công!");
+          message.success("Cập nhật trạng thái báo cáo thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {
           const errorMsg =
             error?.response?.data?.error ||
             error?.message ||
-            "Failed to update complaint status";
+            "Không thể cập nhật trạng thái báo cáo";
           message.error(errorMsg);
           return false;
         }
@@ -57,9 +57,9 @@ const UpdateComplaintStatusModal: React.FC<UpdateComplaintStatusModalProps> = ({
     >
       <ProFormSelect
         name="status"
-        label="Status"
-        placeholder="Select status"
-        rules={[{ required: true, message: "Please select a status" }]}
+        label="Trạng Thái"
+        placeholder="Chọn trạng thái"
+        rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
         options={COMPLAINT_STATUSES.map((s) => ({
           label: s.label,
           value: s.value,
@@ -67,8 +67,8 @@ const UpdateComplaintStatusModal: React.FC<UpdateComplaintStatusModalProps> = ({
       />
       <ProFormTextArea
         name="admin_notes"
-        label="Admin Notes"
-        placeholder="Add notes about this complaint resolution (optional)"
+        label="Ghi Chú Của Quản Trị Viên"
+        placeholder="Thêm ghi chú về việc giải quyết báo cáo này (tùy chọn)"
         fieldProps={{
           rows: 4,
           maxLength: 1000,

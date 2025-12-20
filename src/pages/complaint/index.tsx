@@ -31,13 +31,13 @@ const ComplaintManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteComplaint(id);
-      messageApi.success("Xóa khiếu nại thành công");
+      messageApi.success("Xóa báo cáo thành công");
       actionRef.current?.reload();
     } catch (error: any) {
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Failed to delete complaint";
+        "Không thể xóa báo cáo";
       messageApi.error(errorMsg);
     }
   };
@@ -54,7 +54,7 @@ const ComplaintManagement: React.FC = () => {
 
   const columns: ProColumns<Complaint>[] = [
     {
-      title: "Target Type",
+      title: "Loại Đối Tượng",
       dataIndex: "target_type",
       valueType: "select",
       valueEnum: {
@@ -69,7 +69,7 @@ const ComplaintManagement: React.FC = () => {
       width: 120,
     },
     {
-      title: "Category",
+      title: "Danh Mục",
       dataIndex: "category",
       valueType: "select",
       valueEnum: COMPLAINT_CATEGORIES.reduce(
@@ -88,7 +88,7 @@ const ComplaintManagement: React.FC = () => {
       width: 180,
     },
     {
-      title: "Status",
+      title: "Trạng Thái",
       dataIndex: "status",
       valueType: "select",
       valueEnum: {
@@ -111,7 +111,7 @@ const ComplaintManagement: React.FC = () => {
       width: 140,
     },
     {
-      title: "Content",
+      title: "Nội Dung",
       dataIndex: "content",
       hideInSearch: true,
       ellipsis: true,
@@ -122,7 +122,7 @@ const ComplaintManagement: React.FC = () => {
       },
     },
     {
-      title: "Created At",
+      title: "Ngày Tạo",
       dataIndex: "created_at",
       valueType: "dateTime",
       hideInSearch: true,
@@ -130,7 +130,7 @@ const ComplaintManagement: React.FC = () => {
       width: 180,
     },
     {
-      title: "Actions",
+      title: "Hành Động",
       dataIndex: "option",
       valueType: "option",
       width: 180,
@@ -161,11 +161,11 @@ const ComplaintManagement: React.FC = () => {
         />,
         <Popconfirm
           key="delete"
-          title="Delete Complaint"
-          description="Are you sure you want to delete this complaint?"
+          title="Xóa Báo Cáo"
+          description="Bạn có chắc chắn muốn xóa báo cáo này?"
           onConfirm={() => handleDelete(record.id)}
-          okText="Yes"
-          cancelText="No"
+          okText="Có"
+          cancelText="Không"
         >
           <Button type="text" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>,
@@ -177,7 +177,7 @@ const ComplaintManagement: React.FC = () => {
     <PageContainer>
       {contextHolder}
       <ProTable<Complaint>
-        headerTitle="Complaints List"
+        headerTitle="Danh Sách Báo Cáo"
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -220,8 +220,8 @@ const ComplaintManagement: React.FC = () => {
               error?.response?.data
             );
             messageApi.error(
-              `Failed to fetch complaints: ${
-                error?.response?.status || "Unknown error"
+              `Không thể tải danh sách báo cáo: ${
+                error?.response?.status || "Lỗi không xác định"
               }`
             );
             return {
@@ -246,7 +246,7 @@ const ComplaintManagement: React.FC = () => {
           setShowDetail(false);
         }}
         closable={true}
-        title="Complaint Details"
+        title="Chi Tiết Báo Cáo"
       >
         {currentRow && (
           <ProDescriptions<Complaint>
@@ -254,7 +254,7 @@ const ComplaintManagement: React.FC = () => {
             dataSource={currentRow}
             columns={[
               {
-                title: "Target Type",
+                title: "Loại Đối Tượng",
                 dataIndex: "target_type",
                 render: (_, record) => (
                   <Tag color={record.target_type === "POST" ? "blue" : "cyan"}>
@@ -263,12 +263,12 @@ const ComplaintManagement: React.FC = () => {
                 ),
               },
               {
-                title: "Target ID",
+                title: "ID Đối Tượng",
                 dataIndex: "target_id",
                 copyable: true,
               },
               {
-                title: "Category",
+                title: "Danh Mục",
                 dataIndex: "category",
                 render: (_, record) => (
                   <Tag color={getCategoryColor(record.category)}>
@@ -279,7 +279,7 @@ const ComplaintManagement: React.FC = () => {
                 ),
               },
               {
-                title: "Status",
+                title: "Trạng Thái",
                 dataIndex: "status",
                 render: (_, record) => {
                   const statusConfig = COMPLAINT_STATUSES.find(
@@ -294,39 +294,39 @@ const ComplaintManagement: React.FC = () => {
                 },
               },
               {
-                title: "Complaint Content",
+                title: "Nội Dung Báo Cáo",
                 dataIndex: "content",
                 valueType: "text",
               },
               {
-                title: "Admin Notes",
+                title: "Ghi Chú Của Quản Trị Viên",
                 dataIndex: "admin_notes",
                 valueType: "text",
                 render: (_, record) => record.admin_notes || "-",
               },
               {
-                title: "Reporter ID",
+                title: "ID Người Báo Cáo",
                 dataIndex: "user_id",
                 copyable: true,
               },
               {
-                title: "Created At",
+                title: "Ngày Tạo",
                 dataIndex: "created_at",
                 valueType: "dateTime",
               },
               {
-                title: "Updated At",
+                title: "Ngày Cập Nhật",
                 dataIndex: "updated_at",
                 valueType: "dateTime",
               },
               {
-                title: "Resolved At",
+                title: "Ngày Giải Quyết",
                 dataIndex: "resolved_at",
                 valueType: "dateTime",
                 render: (_, record) => record.resolved_at || "-",
               },
               {
-                title: "Resolved By",
+                title: "Người Giải Quyết",
                 dataIndex: "resolved_by",
                 copyable: true,
                 render: (_, record) => record.resolved_by || "-",
@@ -341,7 +341,7 @@ const ComplaintManagement: React.FC = () => {
               complaint={currentRow}
               trigger={
                 <Button type="primary" icon={<EditOutlined />}>
-                  Update Status
+                  Cập Nhật Trạng Thái
                 </Button>
               }
               onSuccess={() => {
@@ -352,7 +352,7 @@ const ComplaintManagement: React.FC = () => {
             <ViewTargetContentModal
               complaint={currentRow}
               trigger={
-                <Button icon={<FileTextOutlined />}>View Target Content</Button>
+                <Button icon={<FileTextOutlined />}>Xem Nội Dung Đối Tượng</Button>
               }
               onSuccess={() => actionRef.current?.reload()}
             />

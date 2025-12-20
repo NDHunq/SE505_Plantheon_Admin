@@ -56,11 +56,11 @@ const UserManagement: React.FC = () => {
     const currentlyActive = getActiveFlag(user);
     const action = currentlyActive ? disableAdminUser : enableAdminUser;
     const successMsg = currentlyActive
-      ? "User disabled successfully"
-      : "User enabled successfully";
+      ? "Vô hiệu hóa người dùng thành công"
+      : "Kích hoạt người dùng thành công";
     const errorFallback = currentlyActive
-      ? "Failed to disable user"
-      : "Failed to enable user";
+      ? "Không thể vô hiệu hóa người dùng"
+      : "Không thể kích hoạt người dùng";
 
     try {
       setTogglingId(user.id);
@@ -79,7 +79,7 @@ const UserManagement: React.FC = () => {
       const status = error?.response?.status;
       const errorMsg =
         status === 0
-          ? "Cannot reach server (network/CORS). Check API server or CORS for PATCH /admin/users/:id/disable."
+          ? "Không thể kết nối máy chủ (mạng/CORS). Kiểm tra máy chủ API hoặc CORS cho PATCH /admin/users/:id/disable."
           : error?.response?.data?.message || error?.message || errorFallback;
       messageApi.error(errorMsg);
     } finally {
@@ -89,7 +89,7 @@ const UserManagement: React.FC = () => {
 
   const columns: ProColumns<AdminUser>[] = [
     {
-      title: "Avatar",
+      title: "Ảnh Đại Diện",
       dataIndex: "avatar",
       hideInSearch: true,
       width: 80,
@@ -107,7 +107,7 @@ const UserManagement: React.FC = () => {
         ),
     },
     {
-      title: "Full Name",
+      title: "Họ Tên",
       dataIndex: "full_name",
       render: (dom, entity) => (
         <a
@@ -121,7 +121,7 @@ const UserManagement: React.FC = () => {
       ),
     },
     {
-      title: "Username",
+      title: "Tên Đăng Nhập",
       dataIndex: "username",
     },
     {
@@ -130,40 +130,40 @@ const UserManagement: React.FC = () => {
       copyable: true,
     },
     {
-      title: "Role",
+      title: "Vai Trò",
       dataIndex: "role",
       valueType: "select",
       valueEnum: {
-        admin: { text: "Admin" },
-        user: { text: "User" },
+        admin: { text: "Quản Trị Viên" },
+        user: { text: "Người Dùng" },
       },
     },
     {
-      title: "Status",
+      title: "Trạng Thái",
       dataIndex: "is_active",
       valueType: "select",
       valueEnum: {
-        true: { text: "Active", status: "Success" },
-        false: { text: "Inactive", status: "Error" },
+        true: { text: "Hoạt Động", status: "Success" },
+        false: { text: "Không Hoạt Động", status: "Error" },
       },
       render: (_, record) => {
         const active = getActiveFlag(record);
         return (
           <Tag color={active ? "green" : "red"}>
-            {active ? "Active" : "Inactive"}
+            {active ? "Hoạt Động" : "Không Hoạt Động"}
           </Tag>
         );
       },
     },
     {
-      title: "Created At",
+      title: "Ngày Tạo",
       dataIndex: "created_at",
       valueType: "dateTime",
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: "Actions",
+      title: "Hành Động",
       dataIndex: "option",
       valueType: "option",
       width: 190,
@@ -182,7 +182,7 @@ const UserManagement: React.FC = () => {
           />,
           <ModalForm
             key="edit"
-            title="Edit User"
+            title="Chỉnh Sửa Người Dùng"
             trigger={
               <Button
                 type="text"
@@ -217,7 +217,7 @@ const UserManagement: React.FC = () => {
                 const errorMsg =
                   error?.response?.data?.message ||
                   error?.message ||
-                  "Failed to update user";
+                  "Không thể cập nhật người dùng";
                 messageApi.error(errorMsg);
                 return false;
               } finally {
@@ -226,21 +226,21 @@ const UserManagement: React.FC = () => {
             }}
           >
             <ProFormText name="email" label="Email" />
-            <ProFormText name="username" label="Username" />
-            <ProFormText name="full_name" label="Full Name" />
-            <ProFormText name="avatar" label="Avatar URL" />
+            <ProFormText name="username" label="Tên Đăng Nhập" />
+            <ProFormText name="full_name" label="Họ Tên" />
+            <ProFormText name="avatar" label="URL Ảnh Đại Diện" />
           </ModalForm>,
           <Popconfirm
             key="toggle"
-            title={active ? "Disable user" : "Enable user"}
+            title={active ? "Vô hiệu hóa người dùng" : "Kích hoạt người dùng"}
             description={
               active
-                ? "Are you sure you want to disable this user?"
-                : "Allow this user to access again?"
+                ? "Bạn có chắc chắn muốn vô hiệu hóa người dùng này?"
+                : "Cho phép người dùng này truy cập lại?"
             }
             onConfirm={() => handleToggleStatus(record)}
-            okText="Yes"
-            cancelText="No"
+            okText="Có"
+            cancelText="Không"
             okButtonProps={{ loading: togglingId === record.id }}
           >
             <Button
@@ -250,7 +250,7 @@ const UserManagement: React.FC = () => {
               icon={active ? <StopOutlined /> : <CheckCircleOutlined />}
               loading={togglingId === record.id}
             >
-              {active ? "Disable" : "Enable"}
+              {active ? "Vô Hiệu Hóa" : "Kích Hoạt"}
             </Button>
           </Popconfirm>,
         ];
@@ -262,7 +262,7 @@ const UserManagement: React.FC = () => {
     <PageContainer>
       {contextHolder}
       <ProTable<AdminUser>
-        headerTitle="User List"
+        headerTitle="Danh Sách Người Dùng"
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -293,7 +293,7 @@ const UserManagement: React.FC = () => {
             const errorMsg =
               error?.response?.data?.message ||
               error?.message ||
-              "Failed to fetch users";
+              "Không thể tải danh sách người dùng";
             messageApi.error(errorMsg);
             return {
               data: [],
@@ -324,24 +324,24 @@ const UserManagement: React.FC = () => {
             column={1}
             dataSource={currentRow}
             columns={[
-              { title: "Full Name", dataIndex: "full_name" },
-              { title: "Username", dataIndex: "username" },
+              { title: "Họ Tên", dataIndex: "full_name" },
+              { title: "Tên Đăng Nhập", dataIndex: "username" },
               { title: "Email", dataIndex: "email" },
-              { title: "Role", dataIndex: "role" },
+              { title: "Vai Trò", dataIndex: "role" },
               {
-                title: "Status",
+                title: "Trạng Thái",
                 dataIndex: "is_active",
                 render: (_, record) => {
                   const active = getActiveFlag(record);
                   return (
                     <Tag color={active ? "green" : "red"}>
-                      {active ? "Active" : "Inactive"}
+                      {active ? "Hoạt Động" : "Không Hoạt Động"}
                     </Tag>
                   );
                 },
               },
               {
-                title: "Avatar",
+                title: "Ảnh Đại Diện",
                 dataIndex: "avatar",
                 render: (_, record) =>
                   record.avatar ? (
@@ -355,12 +355,12 @@ const UserManagement: React.FC = () => {
                   ),
               },
               {
-                title: "Created At",
+                title: "Ngày Tạo",
                 dataIndex: "created_at",
                 valueType: "dateTime",
               },
               {
-                title: "Updated At",
+                title: "Ngày Cập Nhật",
                 dataIndex: "updated_at",
                 valueType: "dateTime",
               },

@@ -203,7 +203,7 @@ const AnalyticsDashboard: React.FC = () => {
           />
           <StatisticCard
             statistic={{
-              title: "Độ Chính Xác AI",
+              title: "Tỉ lệ báo cáo sai",
               value: overallStats.ai_correct_rate,
               suffix: "%",
               status: "default",

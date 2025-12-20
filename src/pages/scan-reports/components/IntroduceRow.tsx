@@ -65,7 +65,7 @@ const IntroduceRow = ({ loading, data }: IntroduceRowProps) => {
         <ChartCard
           loading={loading}
           variant="borderless"
-          title="Độ Chính Xác AI"
+          title="Tỉ lệ báo cáo sai"
           action={
             <Tooltip title="Tỷ lệ AI dự đoán đúng trong các báo cáo đã xác minh">
               <InfoCircleOutlined />

@@ -1,4 +1,5 @@
 import { deleteDisease, Disease, getDiseases } from "@/services/disease";
+import { getPlants } from "@/services/plant";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
@@ -88,7 +89,19 @@ const DiseaseManagement: React.FC = () => {
     {
       title: "Cây trồng",
       dataIndex: "plant_name",
-      hideInSearch: true,
+      valueType: "select",
+      request: async () => {
+        try {
+          const response = await getPlants();
+          return response.data.plants.map((plant) => ({
+            label: plant.name,
+            value: plant.name,
+          }));
+        } catch (error) {
+          console.error("Failed to fetch plants:", error);
+          return [];
+        }
+      },
     },
     {
       title: "Hình ảnh",
@@ -182,17 +195,43 @@ const DiseaseManagement: React.FC = () => {
         ]}
         request={async (params, sort) => {
           try {
+            // If filtering by plant_name, fetch all data to filter client-side
+            const shouldFetchAll = !!params.plant_name;
+            
             const response = await getDiseases({
-              page: params.current || 1,
-              limit: params.pageSize || 10,
+              page: shouldFetchAll ? 1 : (params.current || 1),
+              limit: shouldFetchAll ? 9999 : (params.pageSize || 10),
               search: params.name,
               type: params.type,
             });
 
+            let filteredDiseases = response.data.diseases;
+
+            // Client-side filtering by plant_name since backend doesn't support it
+            if (params.plant_name) {
+              filteredDiseases = filteredDiseases.filter(
+                (disease) => disease.plant_name === params.plant_name
+              );
+            }
+
+            // Apply client-side pagination when we fetched all data
+            if (shouldFetchAll) {
+              const pageSize = params.pageSize || 10;
+              const current = params.current || 1;
+              const start = (current - 1) * pageSize;
+              const end = start + pageSize;
+              
+              return {
+                data: filteredDiseases.slice(start, end),
+                success: true,
+                total: filteredDiseases.length,
+              };
+            }
+
             return {
-              data: response.data.diseases,
+              data: filteredDiseases,
               success: true,
-              total: response.data.total,
+              total: filteredDiseases.length,
             };
           } catch (error) {
             messageApi.error("Tải danh sách bệnh cây thất bại");

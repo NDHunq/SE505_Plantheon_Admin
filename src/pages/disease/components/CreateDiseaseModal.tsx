@@ -1,3 +1,4 @@
+import MarkdownEditor from "@/components/MarkdownEditor";
 import { createDisease, CreateDiseaseParams } from "@/services/disease";
 import { createPlant, CreatePlantParams, getPlants } from "@/services/plant";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -5,7 +6,6 @@ import {
   ModalForm,
   ProFormSelect,
   ProFormText,
-  ProFormTextArea,
 } from "@ant-design/pro-components";
 import {
   Button,
@@ -64,7 +64,7 @@ const CreateDiseaseModal: React.FC<CreateDiseaseModalProps> = ({
             New Disease
           </Button>
         }
-        width={600}
+        width={800}
         modalProps={{
           destroyOnClose: true,
         }}
@@ -162,22 +162,23 @@ const CreateDiseaseModal: React.FC<CreateDiseaseModalProps> = ({
             }
           }}
         />
-        <ProFormTextArea
-          name="description"
-          label="Description"
-          placeholder="Describe the disease symptoms and characteristics"
-          fieldProps={{
-            rows: 4,
-          }}
-        />
-        <ProFormTextArea
-          name="solution"
-          label="Treatment/Solution"
-          placeholder="Describe how to treat or prevent this disease"
-          fieldProps={{
-            rows: 4,
-          }}
-        />
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+            Description
+          </label>
+          <Form.Item name="description">
+            <MarkdownEditor placeholder="Describe the disease symptoms and characteristics" />
+          </Form.Item>
+        </div>
+
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", marginBottom: 8, fontWeight: 500 }}>
+            Treatment/Solution
+          </label>
+          <Form.Item name="solution">
+            <MarkdownEditor placeholder="Describe how to treat or prevent this disease" />
+          </Form.Item>
+        </div>
 
         {/* Custom Image URL List with Preview */}
         <Form.Item label="Image URLs">

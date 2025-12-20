@@ -7,6 +7,7 @@ import {
   ProTable,
 } from "@ant-design/pro-components";
 import { Button, Drawer, Image, message, Popconfirm, Space, Tag } from "antd";
+import MarkdownIt from "markdown-it";
 import React, { useRef, useState } from "react";
 import CreateDiseaseModal from "./components/CreateDiseaseModal";
 import ImportModal from "./components/ImportModal";
@@ -21,6 +22,8 @@ const DiseaseTypeColors: Record<string, string> = {
   "BỆNH TẢO": "cyan",
   "DINH DƯỠNG": "blue",
 };
+
+const mdParser = new MarkdownIt();
 
 const DiseaseManagement: React.FC = () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -236,12 +239,40 @@ const DiseaseManagement: React.FC = () => {
               {
                 title: "Description",
                 dataIndex: "description",
-                valueType: "text",
+                render: (_, record) => (
+                  <div
+                    style={{
+                      maxHeight: "300px",
+                      overflow: "auto",
+                      padding: "8px",
+                      backgroundColor: "#fafafa",
+                      borderRadius: "4px",
+                      border: "1px solid #f0f0f0",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: mdParser.render(record.description || ""),
+                    }}
+                  />
+                ),
               },
               {
                 title: "Solution",
                 dataIndex: "solution",
-                valueType: "text",
+                render: (_, record) => (
+                  <div
+                    style={{
+                      maxHeight: "300px",
+                      overflow: "auto",
+                      padding: "8px",
+                      backgroundColor: "#fafafa",
+                      borderRadius: "4px",
+                      border: "1px solid #f0f0f0",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: mdParser.render(record.solution || ""),
+                    }}
+                  />
+                ),
               },
               {
                 title: "Images",

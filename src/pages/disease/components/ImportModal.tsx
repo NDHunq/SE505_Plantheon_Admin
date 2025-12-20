@@ -68,8 +68,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ onSuccess }) => {
 
   return (
     <ModalForm
-      title="Import Diseases from CSV/Excel"
-      trigger={<Button icon={<UploadOutlined />}>Import</Button>}
+      title="Nh\u1eadp b\u1ec7nh c\u00e2y t\u1eeb CSV/Excel"
+      trigger={<Button icon={<UploadOutlined />}>Nhập</Button>}
       width={600}
       modalProps={{
         destroyOnClose: true,
@@ -80,7 +80,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onSuccess }) => {
       }}
       submitter={{
         searchConfig: {
-          submitText: "Import",
+          submitText: "Nhập",
         },
         submitButtonProps: {
           loading: importing,

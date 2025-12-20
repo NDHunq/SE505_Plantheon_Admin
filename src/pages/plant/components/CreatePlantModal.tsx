@@ -15,10 +15,10 @@ interface CreatePlantModalProps {
 const CreatePlantModal: React.FC<CreatePlantModalProps> = ({ onSuccess }) => {
   return (
     <ModalForm<CreatePlantParams>
-      title="Create New Plant"
+      title="Tạo cây trồng mới"
       trigger={
         <Button type="primary" icon={<PlusOutlined />}>
-          New Plant
+          Cây trồng mới
         </Button>
       }
       width={500}
@@ -28,14 +28,14 @@ const CreatePlantModal: React.FC<CreatePlantModalProps> = ({ onSuccess }) => {
       onFinish={async (values) => {
         try {
           await createPlant(values);
-          message.success("Plant created successfully!");
+          message.success("Tạo cây trồng thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {
           const errorMsg =
             error?.response?.data?.error ||
             error?.message ||
-            "Failed to create plant";
+            "Tạo cây trồng thất bại";
           message.error(errorMsg);
           return false;
         }
@@ -43,19 +43,19 @@ const CreatePlantModal: React.FC<CreatePlantModalProps> = ({ onSuccess }) => {
     >
       <ProFormText
         name="name"
-        label="Plant Name"
-        placeholder="Enter plant name"
-        rules={[{ required: true, message: "Please enter plant name" }]}
+        label="Tên cây trồng"
+        placeholder="Nhập tên cây trồng"
+        rules={[{ required: true, message: "Vui lòng nhập tên cây trồng" }]}
       />
       <ProFormTextArea
         name="description"
-        label="Description"
-        placeholder="Describe the plant"
+        label="Mô tả"
+        placeholder="Mô tả về cây trồng"
         fieldProps={{
           rows: 4,
         }}
       />
-      <Form.Item name="image_url" label="Image URL">
+      <Form.Item name="image_url" label="URL hình ảnh">
         <Space direction="vertical" style={{ width: "100%" }}>
           <Form.Item name="image_url" noStyle>
             <Input placeholder="https://example.com/plant.jpg" />

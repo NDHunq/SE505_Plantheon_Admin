@@ -20,7 +20,7 @@ const UpdatePlantModal: React.FC<UpdatePlantModalProps> = ({
 }) => {
   return (
     <ModalForm<UpdatePlantParams>
-      title="Edit Plant"
+      title="Chỉnh sửa cây trồng"
       trigger={trigger}
       width={500}
       modalProps={{
@@ -34,14 +34,14 @@ const UpdatePlantModal: React.FC<UpdatePlantModalProps> = ({
       onFinish={async (values) => {
         try {
           await updatePlant(plant.id, values);
-          message.success("Plant updated successfully!");
+          message.success("Cập nhật cây trồng thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {
           const errorMsg =
             error?.response?.data?.error ||
             error?.message ||
-            "Failed to update plant";
+            "Cập nhật cây trồng thất bại";
           message.error(errorMsg);
           return false;
         }
@@ -49,19 +49,19 @@ const UpdatePlantModal: React.FC<UpdatePlantModalProps> = ({
     >
       <ProFormText
         name="name"
-        label="Plant Name"
-        placeholder="Enter plant name"
-        rules={[{ required: true, message: "Please enter plant name" }]}
+        label="Tên cây trồng"
+        placeholder="Nhập tên cây trồng"
+        rules={[{ required: true, message: "Vui lòng nhập tên cây trồng" }]}
       />
       <ProFormTextArea
         name="description"
-        label="Description"
-        placeholder="Describe the plant"
+        label="Mô tả"
+        placeholder="Mô tả về cây trồng"
         fieldProps={{
           rows: 4,
         }}
       />
-      <Form.Item name="image_url" label="Image URL">
+      <Form.Item name="image_url" label="URL hình ảnh">
         <Space direction="vertical" style={{ width: "100%" }}>
           <Form.Item name="image_url" noStyle>
             <Input placeholder="https://example.com/plant.jpg" />

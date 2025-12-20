@@ -13,6 +13,9 @@ import CreateDiseaseModal from "./components/CreateDiseaseModal";
 import ImportModal from "./components/ImportModal";
 import UpdateDiseaseModal from "./components/UpdateDiseaseModal";
 
+// Initialize markdown parser
+const mdParser = new MarkdownIt();
+
 const DiseaseTypeColors: Record<string, string> = {
   "BỆNH NẤM": "green",
   "CÂY KHOẺ": "lime",
@@ -23,8 +26,6 @@ const DiseaseTypeColors: Record<string, string> = {
   "DINH DƯỠNG": "blue",
 };
 
-const mdParser = new MarkdownIt();
-
 const DiseaseManagement: React.FC = () => {
   const actionRef = useRef<ActionType | null>(null);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -34,20 +35,20 @@ const DiseaseManagement: React.FC = () => {
   const handleDelete = async (className: string) => {
     try {
       await deleteDisease(className);
-      messageApi.success("Disease deleted successfully");
+      messageApi.success("Xóa bệnh cây thành công");
       actionRef.current?.reload();
     } catch (error: any) {
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Failed to delete disease";
+        "Xóa bệnh cây thất bại";
       messageApi.error(errorMsg);
     }
   };
 
   const columns: ProColumns<Disease>[] = [
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       render: (dom, entity) => (
         <a
@@ -61,12 +62,12 @@ const DiseaseManagement: React.FC = () => {
       ),
     },
     {
-      title: "Class Name",
+      title: "Tên lớp",
       dataIndex: "class_name",
       copyable: true,
     },
     {
-      title: "Type",
+      title: "Loại",
       dataIndex: "type",
       valueType: "select",
       valueEnum: {
@@ -85,12 +86,12 @@ const DiseaseManagement: React.FC = () => {
       ),
     },
     {
-      title: "Plant",
+      title: "Cây trồng",
       dataIndex: "plant_name",
       hideInSearch: true,
     },
     {
-      title: "Images",
+      title: "Hình ảnh",
       dataIndex: "image_link",
       hideInSearch: true,
       render: (_, record) => {
@@ -118,14 +119,14 @@ const DiseaseManagement: React.FC = () => {
       },
     },
     {
-      title: "Created At",
+      title: "Ngày tạo",
       dataIndex: "created_at",
       valueType: "dateTime",
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: "Actions",
+      title: "Thao tác",
       dataIndex: "option",
       valueType: "option",
       render: (_, record) => [
@@ -147,11 +148,11 @@ const DiseaseManagement: React.FC = () => {
         />,
         <Popconfirm
           key="delete"
-          title="Delete Disease"
-          description="Are you sure you want to delete this disease?"
+          title="Xóa bệnh cây"
+          description="Bạn có chắc chắn muốn xóa bệnh cây này?"
           onConfirm={() => handleDelete(record.class_name)}
-          okText="Yes"
-          cancelText="No"
+          okText="Có"
+          cancelText="Không"
         >
           <Button type="text" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>,
@@ -163,7 +164,7 @@ const DiseaseManagement: React.FC = () => {
     <PageContainer>
       {contextHolder}
       <ProTable<Disease>
-        headerTitle="Disease List"
+        headerTitle="Danh sách bệnh cây"
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -194,7 +195,7 @@ const DiseaseManagement: React.FC = () => {
               total: response.data.total,
             };
           } catch (error) {
-            messageApi.error("Failed to fetch diseases");
+            messageApi.error("Tải danh sách bệnh cây thất bại");
             return {
               data: [],
               success: false,
@@ -224,10 +225,10 @@ const DiseaseManagement: React.FC = () => {
             column={1}
             dataSource={currentRow}
             columns={[
-              { title: "Name", dataIndex: "name" },
-              { title: "Class Name", dataIndex: "class_name" },
+              { title: "Tên", dataIndex: "name" },
+              { title: "Tên lớp", dataIndex: "class_name" },
               {
-                title: "Type",
+                title: "Loại",
                 dataIndex: "type",
                 render: (_, record) => (
                   <Tag color={DiseaseTypeColors[record.type] || "default"}>
@@ -235,19 +236,19 @@ const DiseaseManagement: React.FC = () => {
                   </Tag>
                 ),
               },
-              { title: "Plant", dataIndex: "plant_name" },
+              { title: "Cây trồng", dataIndex: "plant_name" },
               {
-                title: "Description",
+                title: "Mô tả",
                 dataIndex: "description",
                 render: (_, record) => (
                   <div
                     style={{
-                      maxHeight: "300px",
+                      maxHeight: "400px",
                       overflow: "auto",
-                      padding: "8px",
-                      backgroundColor: "#fafafa",
-                      borderRadius: "4px",
+                      padding: "12px",
                       border: "1px solid #f0f0f0",
+                      borderRadius: "6px",
+                      backgroundColor: "#fafafa",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: mdParser.render(record.description || ""),
@@ -256,17 +257,17 @@ const DiseaseManagement: React.FC = () => {
                 ),
               },
               {
-                title: "Solution",
+                title: "Giải pháp",
                 dataIndex: "solution",
                 render: (_, record) => (
                   <div
                     style={{
-                      maxHeight: "300px",
+                      maxHeight: "400px",
                       overflow: "auto",
-                      padding: "8px",
-                      backgroundColor: "#fafafa",
-                      borderRadius: "4px",
+                      padding: "12px",
                       border: "1px solid #f0f0f0",
+                      borderRadius: "6px",
+                      backgroundColor: "#fafafa",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: mdParser.render(record.solution || ""),
@@ -275,7 +276,7 @@ const DiseaseManagement: React.FC = () => {
                 ),
               },
               {
-                title: "Images",
+                title: "Hình ảnh",
                 dataIndex: "image_link",
                 render: (_, record) => {
                   const images = record.image_link || [];
@@ -298,12 +299,12 @@ const DiseaseManagement: React.FC = () => {
                 },
               },
               {
-                title: "Created At",
+                title: "Ngày tạo",
                 dataIndex: "created_at",
                 valueType: "dateTime",
               },
               {
-                title: "Updated At",
+                title: "Ngày cập nhật",
                 dataIndex: "updated_at",
                 valueType: "dateTime",
               },

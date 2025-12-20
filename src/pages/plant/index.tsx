@@ -20,20 +20,20 @@ const PlantManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deletePlant(id);
-      messageApi.success("Plant deleted successfully");
+      messageApi.success("Xóa cây trồng thành công");
       actionRef.current?.reload();
     } catch (error: any) {
       const errorMsg =
         error?.response?.data?.error ||
         error?.message ||
-        "Failed to delete plant";
+        "Xóa cây trồng thất bại";
       messageApi.error(errorMsg);
     }
   };
 
   const columns: ProColumns<Plant>[] = [
     {
-      title: "Image",
+      title: "Hình ảnh",
       dataIndex: "image_url",
       hideInSearch: true,
       width: 80,
@@ -51,7 +51,7 @@ const PlantManagement: React.FC = () => {
         ),
     },
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       render: (dom, entity) => (
         <a
@@ -65,21 +65,21 @@ const PlantManagement: React.FC = () => {
       ),
     },
     {
-      title: "Description",
+      title: "Mô tả",
       dataIndex: "description",
       hideInSearch: true,
       ellipsis: true,
       width: 300,
     },
     {
-      title: "Created At",
+      title: "Ngày tạo",
       dataIndex: "created_at",
       valueType: "dateTime",
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: "Actions",
+      title: "Thao tác",
       dataIndex: "option",
       valueType: "option",
       width: 120,
@@ -102,11 +102,11 @@ const PlantManagement: React.FC = () => {
         />,
         <Popconfirm
           key="delete"
-          title="Delete Plant"
-          description="Are you sure you want to delete this plant?"
+          title="Xóa cây trồng"
+          description="Bạn có chắc chắn muốn xóa cây trồng này?"
           onConfirm={() => handleDelete(record.id)}
-          okText="Yes"
-          cancelText="No"
+          okText="Có"
+          cancelText="Không"
         >
           <Button type="text" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>,
@@ -118,7 +118,7 @@ const PlantManagement: React.FC = () => {
     <PageContainer>
       {contextHolder}
       <ProTable<Plant>
-        headerTitle="Plant List"
+        headerTitle="Danh sách cây trồng"
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -148,7 +148,7 @@ const PlantManagement: React.FC = () => {
               total: plants.length,
             };
           } catch (error) {
-            messageApi.error("Failed to fetch plants");
+            messageApi.error("Tải danh sách cây trồng thất bại");
             return {
               data: [],
               success: false,
@@ -178,14 +178,14 @@ const PlantManagement: React.FC = () => {
             column={1}
             dataSource={currentRow}
             columns={[
-              { title: "Name", dataIndex: "name" },
+              { title: "Tên", dataIndex: "name" },
               {
-                title: "Description",
+                title: "Mô tả",
                 dataIndex: "description",
                 valueType: "text",
               },
               {
-                title: "Image",
+                title: "Hình ảnh",
                 dataIndex: "image_url",
                 render: (_, record) =>
                   record.image_url ? (
@@ -199,12 +199,12 @@ const PlantManagement: React.FC = () => {
                   ),
               },
               {
-                title: "Created At",
+                title: "Ngày tạo",
                 dataIndex: "created_at",
                 valueType: "dateTime",
               },
               {
-                title: "Updated At",
+                title: "Ngày cập nhật",
                 dataIndex: "updated_at",
                 valueType: "dateTime",
               },

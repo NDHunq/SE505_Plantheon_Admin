@@ -610,15 +610,19 @@ const FarmingGuide: React.FC = () => {
                                         size="small"
                                         style={{ minHeight: 220, display: "flex", flexDirection: "column" }}
                                         title={
-                                          <Space align="center">
-                                            <Tag color="purple">#{idx + 1}</Tag>
-                                            <strong>{sub.title}</strong>
-                                            <Tag color="blue">
-                                              Ngày {sub.start_day_offset ?? 0} - {sub.end_day_offset ?? "?"}
-                                            </Tag>
-                                            <Tag color="geekblue">
-                                              {sub.blogs?.length || 0} Bài Viết
-                                            </Tag>
+                                          <Space direction="vertical" size={4} style={{ width: '100%', paddingTop: 6 }}>
+                                            <Space align="center">
+                                              <Tag color="purple">#{idx + 1}</Tag>
+                                              <strong>{sub.title}</strong>
+                                            </Space>
+                                            <Space wrap style={{ paddingBottom: 6 }}>
+                                              <Tag color="blue">
+                                                Ngày {sub.start_day_offset ?? 0} - {sub.end_day_offset ?? "?"}
+                                              </Tag>
+                                              <Tag color="geekblue">
+                                                {sub.blogs?.length || 0} Bài Viết
+                                              </Tag>
+                                            </Space>
                                           </Space>
                                         }
                                         extra={
@@ -667,41 +671,25 @@ const FarmingGuide: React.FC = () => {
                                         ]}
                                       >
                                         <List
-                                          grid={{ gutter: 12, column: 3 }}
                                           dataSource={sub.blogs || []}
                                           locale={{ emptyText: "Không có bài viết" }}
                                           renderItem={(blog: any) => {
                                             const blogId = getBlogId(blog);
                                             return (
-                                              <List.Item>
-                                                <Card
-                                                  size="small"
-                                                  hoverable
-                                                  style={{ minHeight: 180, display: "flex", flexDirection: "column" }}
-                                                  onClick={() => handleBlogView(blogId, sub.id)}
-                                                  cover={
-                                                    blog.cover_image_url ? (
-                                                      <img
-                                                        alt={blog.title}
-                                                        src={blog.cover_image_url}
-                                                        style={{ height: 120, objectFit: "cover" }}
-                                                      />
-                                                    ) : undefined
-                                                  }
-                                                  actions={[
+                                              <List.Item
+                                                actions={[
+                                                  <Space key="actions" direction="vertical" size={4}>
                                                     <Button
-                                                      key="edit"
-                                                      type="link"
+                                                      type="text"
+                                                      size="small"
+                                                      icon={<EditOutlined />}
                                                       onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleBlogEdit(blogId, sub.id);
                                                       }}
                                                       disabled={!blogId}
-                                                    >
-                                                      Sửa
-                                                    </Button>,
+                                                    />
                                                     <Popconfirm
-                                                      key="delete"
                                                       title="Xóa bài viết"
                                                       onConfirm={(e) => {
                                                         e?.stopPropagation?.();
@@ -710,31 +698,54 @@ const FarmingGuide: React.FC = () => {
                                                       disabled={!blogId}
                                                     >
                                                       <Button
-                                                        type="link"
+                                                        type="text"
+                                                        size="small"
                                                         danger
+                                                        icon={<DeleteOutlined />}
                                                         disabled={!blogId}
                                                         onClick={(e) => e.stopPropagation()}
-                                                      >
-                                                        Xóa
-                                                      </Button>
-                                                    </Popconfirm>,
-                                                  ]}
-                                                >
-                                                  <Card.Meta
-                                                    title={blog.title}
-                                                    description={
+                                                      />
+                                                    </Popconfirm>
+                                                  </Space>,
+                                                ]}
+                                              >
+                                                <List.Item.Meta
+                                                  avatar={
+                                                    blog.cover_image_url ? (
+                                                      <img
+                                                        alt={blog.title}
+                                                        src={blog.cover_image_url}
+                                                        style={{ 
+                                                          width: 60, 
+                                                          height: 60, 
+                                                          objectFit: "cover",
+                                                          borderRadius: 4
+                                                        }}
+                                                      />
+                                                    ) : (
                                                       <div
                                                         style={{
-                                                          whiteSpace: "nowrap",
-                                                          overflow: "hidden",
-                                                          textOverflow: "ellipsis",
+                                                          width: 50,
+                                                          height: 50,
+                                                          backgroundColor: "#f0f0f0",
+                                                          display: "flex",
+                                                          alignItems: "center",
+                                                          justifyContent: "center",
+                                                          borderRadius: 4,
+                                                          fontSize: 10,
                                                         }}
                                                       >
-                                                        {blog.description || "-"}
+                                                        N/A
                                                       </div>
-                                                    }
-                                                  />
-                                                </Card>
+                                                    )
+                                                  }
+                                                  title={
+                                                    <a onClick={() => handleBlogView(blogId, sub.id)}>
+                                                      {blog.title}
+                                                    </a>
+                                                  }
+                                                  description={blog.description || "-"}
+                                                />
                                               </List.Item>
                                             );
                                           }}

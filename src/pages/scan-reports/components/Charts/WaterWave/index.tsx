@@ -3,7 +3,7 @@ import autoHeight from '../../../../monitor/components/Charts/autoHeight';
 
 /* eslint no-return-assign: 0 */
 /* eslint no-mixed-operators: 0 */
-// riddle: https://riddle.alibaba-inc.com/riddles/2d9a4b90
+
 
 export type WaterWaveProps = {
   title: React.ReactNode;
@@ -35,7 +35,7 @@ class WaterWave extends Component<WaterWaveProps> {
   componentDidUpdate(props: WaterWaveProps) {
     const { percent } = this.props;
     if (props.percent !== percent) {
-      // 不加这个会造成绘制缓慢
+
       this.renderChart('update');
     }
   }
@@ -76,12 +76,12 @@ class WaterWave extends Component<WaterWaveProps> {
     ctx.lineWidth = lineWidth * 2;
     const axisLength = canvasWidth - lineWidth;
     const unit = axisLength / 8;
-    const range = 0.2; // 振幅
+    const range = 0.2;
     let currRange = range;
     const xOffset = lineWidth;
-    let sp = 0; // 周期偏移量
+    let sp = 0;
     let currData = 0;
-    const waveupsp = 0.005; // 水波上涨速度
+    const waveupsp = 0.005;
 
     let arcStack: number[][] = [];
     const bR = radius - lineWidth;

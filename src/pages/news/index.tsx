@@ -77,7 +77,7 @@ const statusColors: Record<NewsStatus, string> = {
   published: "green",
 };
 
-// Initialize markdown parser
+
 const mdParser = new MarkdownIt();
 
 const Function5: React.FC = () => {
@@ -127,7 +127,7 @@ const Function5: React.FC = () => {
     [tags]
   );
 
-  // Helper: clean payload & cast numeric offsets
+
   const cleanGuidePayload = (obj: Record<string, any>) => {
     const cleaned: Record<string, any> = {};
     Object.entries(obj).forEach(([k, v]) => {
@@ -142,12 +142,12 @@ const Function5: React.FC = () => {
     return cleaned;
   };
 
-  // Load tags on component mount
+
   useEffect(() => {
     loadTags();
   }, []);
 
-  // Load plants when guide tab active
+
   useEffect(() => {
     if (activeTab === "guide" && plants.length === 0) {
       loadPlants();

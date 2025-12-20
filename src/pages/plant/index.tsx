@@ -135,7 +135,6 @@ const PlantManagement: React.FC = () => {
             const response = await getPlants();
             let plants = response.data.plants || [];
 
-            // Client-side search by name
             if (params.name) {
               plants = plants.filter((p) =>
                 p.name.toLowerCase().includes(params.name.toLowerCase())

@@ -26,7 +26,7 @@ import MdEditor from "react-markdown-editor-lite";
 import MarkdownIt from "markdown-it";
 import "react-markdown-editor-lite/lib/index.css";
 
-// Initialize markdown parser
+
 const mdParser = new MarkdownIt();
 
 interface UpdateDiseaseModalProps {

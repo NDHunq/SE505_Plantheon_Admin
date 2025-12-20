@@ -13,7 +13,7 @@ import CreateDiseaseModal from "./components/CreateDiseaseModal";
 import ImportModal from "./components/ImportModal";
 import UpdateDiseaseModal from "./components/UpdateDiseaseModal";
 
-// Initialize markdown parser
+
 const mdParser = new MarkdownIt();
 
 const DiseaseTypeColors: Record<string, string> = {

@@ -13,7 +13,6 @@ interface TrendsCardProps {
 }
 
 const TrendsCard = ({ loading, data, days, onDaysChange }: TrendsCardProps) => {
-  // Transform data for @ant-design/plots
   const chartData = data.flatMap(item => [
     {
       date: item.date,
@@ -48,7 +47,7 @@ const TrendsCard = ({ loading, data, days, onDaysChange }: TrendsCardProps) => {
         fill: '#aaa',
       },
     },
-    color: ['#722ed1', '#52c41a'], // Purple for total, Green for verified
+    color: ['#722ed1', '#52c41a'],
     legend: {
       position: 'top' as const,
     },

@@ -54,7 +54,6 @@ const ScanReportManagement: React.FC = () => {
     verified: 0,
   });
 
-  // Analytics state
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [overallStats, setOverallStats] = useState<any>(null);
   const [trends, setTrends] = useState<any[]>([]);
@@ -82,7 +81,6 @@ const ScanReportManagement: React.FC = () => {
     }
   };
 
-  // Analytics useEffects
   useEffect(() => {
     fetchAnalyticsData();
   }, []);
@@ -168,7 +166,6 @@ const ScanReportManagement: React.FC = () => {
       messageApi.loading("Đang export training data...", 0);
       const response = await exportTrainingData();
 
-      // Convert to JSON and download
       const dataStr = JSON.stringify(response.data, null, 2);
       const dataBlob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(dataBlob);
@@ -190,7 +187,6 @@ const ScanReportManagement: React.FC = () => {
     }
   };
 
-  // Analytics table columns
   const problematicColumns: ColumnsType<any> = [
     {
       title: "Tên Bệnh",

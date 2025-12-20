@@ -108,12 +108,10 @@ const Register: FC = () => {
   };
   const checkPassword = (_: any, value: string) => {
     const promise = Promise;
-    // 没有值的情况
     if (!value) {
       setVisible(!!value);
       return promise.reject('Vui lòng nhập mật khẩu!');
     }
-    // 有值的情况
     if (!open) {
       setVisible(!!value);
     }

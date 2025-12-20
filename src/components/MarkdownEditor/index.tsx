@@ -4,7 +4,7 @@ import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import "./style.css";
 
-// Initialize markdown parser
+
 const mdParser = new MarkdownIt();
 
 interface MarkdownEditorProps {

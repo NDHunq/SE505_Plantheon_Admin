@@ -96,7 +96,7 @@ const FarmingGuide: React.FC = () => {
     );
   }, [plants, plantSearch]);
 
-  // Helper: clean payload & cast numeric offsets
+
   const cleanGuidePayload = (obj: Record<string, any>) => {
     const cleaned: Record<string, any> = {};
     Object.entries(obj).forEach(([k, v]) => {

@@ -57,7 +57,6 @@ const Login: React.FC = () => {
 
       const { user, token } = response.data;
 
-      // Check if user is admin
       if (user.role !== "admin") {
         setErrorMessage(
           "Truy cập bị từ chối. Chỉ quản trị viên mới có thể truy cập hệ thống này."
@@ -66,13 +65,11 @@ const Login: React.FC = () => {
         return;
       }
 
-      // Store token and user in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
       message.success("Đăng nhập thành công!");
 
-      // Update initialState
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
@@ -88,7 +85,6 @@ const Login: React.FC = () => {
         }));
       });
 
-      // Redirect
       const urlParams = new URL(window.location.href).searchParams;
       window.location.href = urlParams.get("redirect") || "/";
     } catch (error: any) {

@@ -564,12 +564,11 @@ const FarmingGuide: React.FC = () => {
                           <Space direction="vertical" style={{ width: "100%" }} size={12}>
                             {stageDetailLoading === selectedStageId ? (
                               <Spin />
-                            ) : subs.length === 0 ? (
-                              <Empty description="Không có giai đoạn phụ" />
                             ) : (
                               <List
                                 grid={{ gutter: 16, column: 2 }}
                                 dataSource={[...subs.sort((a, b) => (a.start_day_offset ?? 0) - (b.start_day_offset ?? 0)), { __add: true }]}
+                                locale={{ emptyText: <Empty description="Không có giai đoạn phụ" /> }}
                                 renderItem={(sub: any, idx: number) =>
                                   sub.__add ? (
                                     <List.Item key="add-sub-stage">

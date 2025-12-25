@@ -72,3 +72,37 @@ export function isAdmin(): boolean {
   const user = getStoredUser();
   return user?.role === "admin";
 }
+
+/**
+ * Register Admin Params
+ */
+export interface RegisterAdminParams {
+  email: string;
+  username: string;
+  full_name: string;
+  password: string;
+}
+
+export interface RegisterAdminResponse {
+  message: string;
+  data?: {
+    user: User;
+    token?: string;
+  };
+}
+
+/**
+ * Register new admin account
+ * POST /auth/register
+ */
+export async function registerAdmin(
+  params: RegisterAdminParams
+): Promise<RegisterAdminResponse> {
+  return request<RegisterAdminResponse>("/auth/register", {
+    method: "POST",
+    data: {
+      ...params,
+      role: "admin",
+    },
+  });
+}

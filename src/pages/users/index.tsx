@@ -7,27 +7,21 @@ import {
 } from "@/services/adminUser";
 import {
   CheckCircleOutlined,
-  EyeOutlined,
   EditOutlined,
+  EyeOutlined,
   StopOutlined,
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
+  ModalForm,
   PageContainer,
   ProDescriptions,
-  ModalForm,
   ProFormText,
   ProTable,
 } from "@ant-design/pro-components";
-import {
-  Button,
-  Drawer,
-  Image,
-  message,
-  Popconfirm,
-  Tag,
-} from "antd";
+import { Button, Drawer, Image, message, Popconfirm, Tag } from "antd";
 import React, { useRef, useState } from "react";
+import CreateAdminModal from "./components/CreateAdminModal";
 
 const getActiveFlag = (user?: Partial<AdminUser>) => {
   if (user?.is_active !== undefined) return Boolean(user.is_active);
@@ -307,6 +301,12 @@ const UserManagement: React.FC = () => {
           defaultPageSize: 10,
           showSizeChanger: true,
         }}
+        toolBarRender={() => [
+          <CreateAdminModal
+            key="create-admin"
+            onSuccess={() => actionRef.current?.reload()}
+          />,
+        ]}
       />
 
       <Drawer

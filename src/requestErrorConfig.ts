@@ -1,5 +1,6 @@
 ﻿import type { RequestOptions } from "@@/plugin-request/request";
 import type { RequestConfig } from "@umijs/max";
+import { history } from "@umijs/max";
 import { message, notification } from "antd";
 
 enum ErrorShowType {
@@ -19,7 +20,6 @@ interface ResponseStructure {
 
 export const errorConfig: RequestConfig = {
   errorConfig: {
-
     errorThrower: (res) => {
       const { success, data, errorCode, errorMessage, showType } =
         res as unknown as ResponseStructure;
@@ -38,7 +38,6 @@ export const errorConfig: RequestConfig = {
           const { errorMessage, errorCode } = errorInfo;
           switch (errorInfo.showType) {
             case ErrorShowType.SILENT:
-
               break;
             case ErrorShowType.WARN_MESSAGE:
               message.warning(errorMessage);
@@ -53,14 +52,12 @@ export const errorConfig: RequestConfig = {
               });
               break;
             case ErrorShowType.REDIRECT:
-
               break;
             default:
               message.error(errorMessage);
           }
         }
       } else if (error.response) {
-
         console.error("❌ [Error Handler] Response error:", {
           status: error.response.status,
           statusText: error.response.statusText,
@@ -82,14 +79,16 @@ export const errorConfig: RequestConfig = {
               error.response.data?.error || "Unauthorized"
             }`
           );
+          // Auto logout logic
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          history.push("/user/login");
         } else {
           message.error(`Response status:${error.response.status}`);
         }
       } else if (error.request) {
-
         message.error("None response! Please retry.");
       } else {
-
         message.error("Request error, please retry.");
       }
     },

@@ -14,7 +14,6 @@ import CreateDiseaseModal from "./components/CreateDiseaseModal";
 import ImportModal from "./components/ImportModal";
 import UpdateDiseaseModal from "./components/UpdateDiseaseModal";
 
-
 const mdParser = new MarkdownIt();
 
 const DiseaseTypeColors: Record<string, string> = {
@@ -197,10 +196,10 @@ const DiseaseManagement: React.FC = () => {
           try {
             // If filtering by plant_name, fetch all data to filter client-side
             const shouldFetchAll = !!params.plant_name;
-            
+
             const response = await getDiseases({
-              page: shouldFetchAll ? 1 : (params.current || 1),
-              limit: shouldFetchAll ? 9999 : (params.pageSize || 10),
+              page: shouldFetchAll ? 1 : params.current || 1,
+              limit: shouldFetchAll ? 9999 : params.pageSize || 10,
               search: params.name,
               type: params.type,
             });
@@ -220,7 +219,7 @@ const DiseaseManagement: React.FC = () => {
               const current = params.current || 1;
               const start = (current - 1) * pageSize;
               const end = start + pageSize;
-              
+
               return {
                 data: filteredDiseases.slice(start, end),
                 success: true,
@@ -231,7 +230,7 @@ const DiseaseManagement: React.FC = () => {
             return {
               data: filteredDiseases,
               success: true,
-              total: filteredDiseases.length,
+              total: response.data.total,
             };
           } catch (error) {
             messageApi.error("Tải danh sách bệnh cây thất bại");

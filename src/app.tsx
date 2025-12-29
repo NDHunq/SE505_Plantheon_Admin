@@ -149,6 +149,6 @@ export const layout: RunTimeLayoutConfig = ({
 };
 
 export const request: RequestConfig = {
-  baseURL: "http://3.106.199.49:8080/api/v1",
+  baseURL: "https://plantheon-backend.duckdns.org/api/v1",
   ...errorConfig,
 };

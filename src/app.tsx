@@ -1,10 +1,9 @@
 import { AvatarDropdown, AvatarName, Footer } from "@/components";
-import { LinkOutlined } from "@ant-design/icons";
 import type { Settings as LayoutSettings } from "@ant-design/pro-components";
 import { SettingDrawer } from "@ant-design/pro-components";
 import "@ant-design/v5-patch-for-react-19";
 import type { RequestConfig, RunTimeLayoutConfig } from "@umijs/max";
-import { history, Link } from "@umijs/max";
+import { history } from "@umijs/max";
 import { ConfigProvider } from "antd";
 import viVN from "antd/locale/vi_VN";
 import defaultSettings from "../config/defaultSettings";
@@ -79,7 +78,7 @@ export async function getInitialState(): Promise<{
     fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>,
   };
-};
+}
 
 export const layout: RunTimeLayoutConfig = ({
   initialState,
@@ -149,8 +148,7 @@ export const layout: RunTimeLayoutConfig = ({
   };
 };
 
-
 export const request: RequestConfig = {
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: "http://3.106.199.49:8080/api/v1",
   ...errorConfig,
 };

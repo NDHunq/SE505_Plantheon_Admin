@@ -1,5 +1,7 @@
 # Plantheon Admin Dashboard
 
+<img width="200" height="200" alt="logo" src="https://github.com/user-attachments/assets/28f03c6b-0b70-469e-824f-76d2e7fd0be2" />
+
 A comprehensive web-based administration panel for managing the Plantheon plant disease detection system. This dashboard provides administrators with powerful tools to manage plants, diseases, user reports, news content, and monitor AI-powered scan analytics.
 
 ## Overview

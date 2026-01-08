@@ -109,13 +109,13 @@ const AnalyticsDashboard: React.FC = () => {
       ellipsis: true,
     },
     {
-      title: "Tổng Complaints",
+      title: "Tổng báo cáo",
       dataIndex: "complaint_count",
       key: "complaint_count",
       sorter: (a, b) => a.complaint_count - b.complaint_count,
     },
     {
-      title: "Đã Verify",
+      title: "Đã xác minh",
       dataIndex: "verified_count",
       key: "verified_count",
     },
@@ -163,12 +163,12 @@ const AnalyticsDashboard: React.FC = () => {
       ellipsis: true,
     },
     {
-      title: "Tổng Complaints",
+      title: "Tổng báo cáo",
       dataIndex: "complaint_count",
       key: "complaint_count",
     },
     {
-      title: "Đã Verify",
+      title: "Đã xác minh",
       dataIndex: "verified_count",
       key: "verified_count",
     },
@@ -250,7 +250,7 @@ const AnalyticsDashboard: React.FC = () => {
                     dataKey="complaint_count"
                     stroke="#1890ff"
                     strokeWidth={2}
-                    name="Tổng Complaints"
+                    name="Tổng báo cáo"
                     dot={{ r: 4 }}
                     activeDot={{ r: 6 }}
                     label={{ position: 'top', fill: '#1890ff', fontSize: 12 }}
@@ -260,7 +260,7 @@ const AnalyticsDashboard: React.FC = () => {
                     dataKey="verified_count"
                     stroke="#52c41a"
                     strokeWidth={2}
-                    name="Đã Verify"
+                    name="Đã xác minh"
                     dot={{ r: 4 }}
                     activeDot={{ r: 6 }}
                     label={{ position: 'bottom', fill: '#52c41a', fontSize: 12 }}

@@ -17,12 +17,12 @@ const TrendsCard = ({ loading, data, days, onDaysChange }: TrendsCardProps) => {
     {
       date: item.date,
       value: item.complaint_count,
-      category: 'Tổng Complaints',
+      category: 'Tổng báo cáo',
     },
     {
       date: item.date,
       value: item.verified_count,
-      category: 'Đã Verify',
+      category: 'Đã xác minh',
     },
   ]);
 

@@ -389,13 +389,13 @@ const ScanReportManagement: React.FC = () => {
       dataIndex: "is_verified",
       hideInSearch: true,
       filters: [
-        { text: "Đã verify", value: true },
-        { text: "Chưa verify", value: false },
+        { text: "Đã xác minh", value: true },
+        { text: "Chưa xác minh", value: false },
       ],
       onFilter: (value, record) => record.is_verified === value,
       render: (_, record) => (
         <Tag color={record.is_verified ? "green" : "orange"}>
-          {record.is_verified ? "Đã verify" : "Chưa verify"}
+          {record.is_verified ? "Đã xác minh" : "Chưa xác minh"}
         </Tag>
       ),
       width: 140,
@@ -513,7 +513,18 @@ const ScanReportManagement: React.FC = () => {
         headerTitle="Danh sách báo cáo kết quả quét"
         actionRef={actionRef}
         rowKey="id"
-        search={false}
+        search={{
+          searchText: 'Tìm kiếm',
+          resetText: 'Đặt lại',
+          labelWidth: 'auto',
+          collapsed: false,
+          collapseRender: (collapsed) => (collapsed ? 'Mở rộng' : 'Thu gọn'),
+        }}
+        options={{
+          search: {
+            placeholder: 'Tìm kiếm',
+          },
+        }}
         toolBarRender={() => [
           <Button
             key="export"
@@ -643,7 +654,7 @@ const ScanReportManagement: React.FC = () => {
                   },
                 },
                 {
-                  title: "Bệnh đã xác minh (Ground Truth)",
+                  title: "Bệnh đã xác minh",
                   dataIndex: "verified_disease_id",
                   render: (_, record) => {
                     if (!record.verified_disease && !record.verified_disease_id) {
@@ -664,23 +675,23 @@ const ScanReportManagement: React.FC = () => {
                   },
                 },
                 {
-                  title: "Trạng thái verify",
+                  title: "Trạng thái xác minh",
                   dataIndex: "is_verified",
                   render: (_, record) => (
                     <Tag color={record.is_verified ? "green" : "orange"}>
-                      {record.is_verified ? "Đã verify" : "Chưa verify"}
+                      {record.is_verified ? "Đã xác minh" : "Chưa xác minh"}
                     </Tag>
                   ),
                 },
 
                 {
-                  title: "Nội dung complaint",
+                  title: "Nội dung báo cáo",
                   dataIndex: "content",
                   valueType: "text",
                   render: (_, record) => record.content || "-",
                 },
                 {
-                  title: "Ghi chú Admin",
+                  title: "Ghi chú Quản trị viên",
                   dataIndex: "admin_notes",
                   valueType: "text",
                   render: (_, record) => record.admin_notes || "-",

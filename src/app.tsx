@@ -126,7 +126,61 @@ export const layout: RunTimeLayoutConfig = ({
     menuHeaderRender: undefined,
     childrenRender: (children) => {
       return (
-        <ConfigProvider locale={viVN}>
+        <ConfigProvider 
+          locale={{
+            ...viVN,
+            Form: {
+              ...viVN.Form,
+              defaultValidateMessages: {
+                default: 'Lỗi xác thực trường ${label}',
+                required: 'Vui lòng nhập ${label}',
+                enum: '${label} phải là một trong [${enum}]',
+                whitespace: '${label} không được để trống',
+                date: {
+                  format: '${label} định dạng ngày không hợp lệ',
+                  parse: '${label} không thể chuyển đổi thành ngày',
+                  invalid: '${label} là ngày không hợp lệ',
+                },
+                types: {
+                  string: '${label} không phải là chuỗi hợp lệ',
+                  method: '${label} không phải là phương thức hợp lệ',
+                  array: '${label} không phải là mảng hợp lệ',
+                  object: '${label} không phải là đối tượng hợp lệ',
+                  number: '${label} không phải là số hợp lệ',
+                  date: '${label} không phải là ngày hợp lệ',
+                  boolean: '${label} không phải là boolean hợp lệ',
+                  integer: '${label} không phải là số nguyên hợp lệ',
+                  float: '${label} không phải là số thực hợp lệ',
+                  regexp: '${label} không phải là biểu thức chính quy hợp lệ',
+                  email: '${label} không phải là email hợp lệ',
+                  url: '${label} không phải là url hợp lệ',
+                  hex: '${label} không phải là hex hợp lệ',
+                },
+                string: {
+                  len: '${label} phải có ${len} ký tự',
+                  min: '${label} phải có ít nhất ${min} ký tự',
+                  max: '${label} phải có tối đa ${max} ký tự',
+                  range: '${label} phải có từ ${min} đến ${max} ký tự',
+                },
+                number: {
+                  len: '${label} phải bằng ${len}',
+                  min: '${label} phải lớn hơn hoặc bằng ${min}',
+                  max: '${label} phải nhỏ hơn hoặc bằng ${max}',
+                  range: '${label} phải nằm trong khoảng ${min} đến ${max}',
+                },
+                array: {
+                  len: '${label} phải có ${len} phần tử',
+                  min: '${label} phải có ít nhất ${min} phần tử',
+                  max: '${label} phải có tối đa ${max} phần tử',
+                  range: '${label} phải có từ ${min} đến ${max} phần tử',
+                },
+                pattern: {
+                  mismatch: '${label} không khớp với mẫu ${pattern}',
+                },
+              },
+            },
+          }}
+        >
           {children}
           {isDev && (
             <SettingDrawer

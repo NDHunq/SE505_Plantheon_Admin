@@ -13,10 +13,10 @@ const CreateAdminModal: React.FC<CreateAdminModalProps> = ({ onSuccess }) => {
 
   return (
     <ModalForm<RegisterAdminParams & { confirmPassword: string }>
-      title="Tạo Tài Khoản Admin"
+      title="Tạo Tài Khoản Quản Trị Viên"
       trigger={
         <Button type="primary" icon={<UserOutlined />}>
-          Tạo Admin
+          Tạo Quản Trị Viên
         </Button>
       }
       width={500}
@@ -37,7 +37,7 @@ const CreateAdminModal: React.FC<CreateAdminModalProps> = ({ onSuccess }) => {
           }
 
           await registerAdmin(params);
-          message.success("Tạo tài khoản admin thành công!");
+          message.success("Tạo tài khoản quản trị viên thành công!");
           onSuccess?.();
           return true;
         } catch (error: any) {
@@ -45,7 +45,7 @@ const CreateAdminModal: React.FC<CreateAdminModalProps> = ({ onSuccess }) => {
             error?.response?.data?.error ||
             error?.response?.data?.message ||
             error?.message ||
-            "Không thể tạo tài khoản admin";
+            "Không thể tạo tài khoản quản trị viên";
           message.error(errorMsg);
           return false;
         } finally {

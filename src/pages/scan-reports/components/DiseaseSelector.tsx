@@ -57,9 +57,10 @@ const DiseaseSelector: React.FC<DiseaseSelectorProps> = ({
       loading={loading}
       notFoundContent={loading ? <Spin size="small" /> : "Không tìm thấy"}
       style={{ width: "100%" }}
+      optionLabelProp="label"
     >
       {diseases.map((disease) => (
-        <Select.Option key={disease.id} value={disease.id}>
+        <Select.Option key={disease.id} value={disease.id} label={disease.name}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {disease.image_link && disease.image_link.length > 0 && (
               <img

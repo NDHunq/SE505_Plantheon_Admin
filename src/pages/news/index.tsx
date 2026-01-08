@@ -592,7 +592,12 @@ const Function5: React.FC = () => {
         headerTitle="Danh sách Tin Tức"
         actionRef={actionRef}
         rowKey="id"
-        search={{ labelWidth: 120 }}
+        search={{ 
+          labelWidth: 120,
+          searchText: 'Tìm kiếm',
+          resetText: 'Đặt lại',
+          collapseRender: (collapsed) => (collapsed ? 'Mở rộng' : 'Thu gọn'),
+        }}
         toolBarRender={() => [
           <ModalForm
             key="create"

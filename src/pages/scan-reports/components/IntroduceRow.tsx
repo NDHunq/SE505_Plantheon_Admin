@@ -51,7 +51,7 @@ const IntroduceRow = ({ loading, data }: IntroduceRowProps) => {
           loading={loading}
           title="Đã xác minh"
           action={
-            <Tooltip title="Số báo cáo đã được admin xác minh">
+            <Tooltip title="Số báo cáo đã được quản trị viên xác minh">
               <InfoCircleOutlined />
             </Tooltip>
           }

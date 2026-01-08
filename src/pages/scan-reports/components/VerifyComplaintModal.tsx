@@ -50,7 +50,7 @@ const VerifyComplaintModal: React.FC<VerifyComplaintModalProps> = ({
       {contextHolder}
       <span onClick={() => setOpen(true)}>{trigger}</span>
       <Modal
-        title="Xác minh Scan Complaint"
+        title="Xác minh Báo cáo quét"
         open={open}
         onOk={handleSubmit}
         onCancel={() => {
@@ -75,7 +75,7 @@ const VerifyComplaintModal: React.FC<VerifyComplaintModalProps> = ({
                 "-"
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="AI Prediction">
+            <Descriptions.Item label="Dự đoán của hệ thống">
               {complaint.predicted_disease ? (
                 <div>
                   <div style={{ fontWeight: 500 }}>
@@ -89,7 +89,7 @@ const VerifyComplaintModal: React.FC<VerifyComplaintModalProps> = ({
                 complaint.predicted_disease_id || "-"
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="User Suggestion">
+            <Descriptions.Item label="Đề xuất của người dùng">
               {complaint.user_suggested_disease ? (
                 <div>
                   <div style={{ fontWeight: 500 }}>
@@ -103,7 +103,7 @@ const VerifyComplaintModal: React.FC<VerifyComplaintModalProps> = ({
                 complaint.user_suggested_disease_id || "-"
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="Confidence Score">
+            <Descriptions.Item label="Điểm tin cậy">
               {complaint.confidence_score ? (
                 <Tag color={complaint.confidence_score > 0.7 ? "green" : "orange"}>
                   {(complaint.confidence_score * 100).toFixed(1)}%
@@ -121,7 +121,7 @@ const VerifyComplaintModal: React.FC<VerifyComplaintModalProps> = ({
         <Form form={form} layout="vertical">
           <Form.Item
             name="verified_disease_id"
-            label="Chọn bệnh cây chính xác (Ground Truth)"
+            label="Chọn bệnh cây chính xác"
             rules={[{ required: true, message: "Vui lòng chọn bệnh cây" }]}
           >
             <DiseaseSelector placeholder="Chọn bệnh cây đúng..." />
@@ -129,7 +129,7 @@ const VerifyComplaintModal: React.FC<VerifyComplaintModalProps> = ({
 
           <Form.Item
             name="admin_notes"
-            label="Ghi chú của Admin"
+            label="Ghi chú của quản trị viên"
             rules={[{ max: 1000, message: "Ghi chú tối đa 1000 ký tự" }]}
           >
             <Input.TextArea
